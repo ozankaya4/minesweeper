@@ -2,7 +2,7 @@
 RogueSweeper Middleware
 
 This module contains custom middleware for the game application,
-including guest player authentication handling.
+including guest player handling without database records.
 
 Author: RogueSweeper Team
 """
@@ -13,24 +13,55 @@ import secrets
 import string
 from typing import Callable
 
-from django.contrib.auth import login
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest, HttpResponse
 
-from .models import Player
+
+class GuestUser(AnonymousUser):
+    """
+    A guest user that can play the game without a database record.
+    
+    This class extends AnonymousUser to provide guest-specific properties
+    while keeping the user unauthenticated in Django's auth system.
+    Guest users can play the game but their scores are not saved.
+    """
+    
+    def __init__(self, session_id: str):
+        super().__init__()
+        self._session_id = session_id
+        self._guest_name = f"Guest-{session_id[:6].upper()}"
+    
+    @property
+    def is_guest(self) -> bool:
+        """Return True to identify this as a guest user."""
+        return True
+    
+    @property
+    def username(self) -> str:
+        """Return the guest username."""
+        return self._guest_name
+    
+    @property
+    def id(self) -> str:
+        """Return the session ID as the user ID."""
+        return self._session_id
+    
+    def __str__(self) -> str:
+        """Return string representation."""
+        return self._guest_name
 
 
 class GuestPlayerMiddleware:
     """
-    Middleware that automatically creates and authenticates guest players.
+    Middleware that provides guest user functionality without database records.
     
     This middleware ensures that all users can play the game immediately
-    without requiring registration. If a user is not authenticated, a
-    guest account is created and associated with their session.
+    without requiring registration. Guests are identified by their session
+    but no Player record is created in the database.
     
     Flow:
         1. If user is already authenticated → proceed without changes
-        2. If session has guest_user_id → retrieve and login that player
-        3. If no guest exists → create new guest player and login
+        2. If user is not authenticated → attach GuestUser to request
     
     Must be placed after AuthenticationMiddleware and SessionMiddleware
     in the MIDDLEWARE setting.
@@ -47,7 +78,7 @@ class GuestPlayerMiddleware:
     
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """
-        Process the request and ensure user is authenticated.
+        Process the request and provide guest user for unauthenticated requests.
         
         Args:
             request: The incoming HTTP request.
@@ -55,7 +86,7 @@ class GuestPlayerMiddleware:
         Returns:
             The HTTP response from the view or next middleware.
         """
-        # Skip if user is already authenticated
+        # Skip if user is already authenticated (logged in)
         if request.user.is_authenticated:
             return self.get_response(request)
         
@@ -63,64 +94,11 @@ class GuestPlayerMiddleware:
         if not request.session.session_key:
             request.session.create()
         
-        # Try to retrieve existing guest user from session
-        guest_user_id = request.session.get('guest_user_id')
+        # Create a guest user object (not saved to database)
+        guest_user = GuestUser(request.session.session_key)
         
-        if guest_user_id:
-            # Try to get existing guest player
-            try:
-                guest_player = Player.objects.get(
-                    id=guest_user_id,
-                    is_guest=True,
-                    is_active=True
-                )
-                # Log in the guest player
-                login(request, guest_player)
-                return self.get_response(request)
-            except Player.DoesNotExist:
-                # Guest player no longer exists, clear invalid ID
-                del request.session['guest_user_id']
-        
-        # Create new guest player
-        guest_player = self._create_guest_player()
-        
-        # Store guest ID in session
-        request.session['guest_user_id'] = str(guest_player.id)
-        
-        # Log in the guest player
-        login(request, guest_player)
+        # Attach guest user to request for easy access
+        request.guest_user = guest_user
         
         return self.get_response(request)
-    
-    def _create_guest_player(self) -> Player:
-        """
-        Create a new guest player with a random username.
-        
-        Generates a unique username in the format "Guest-XXXX" where
-        XXXX is a random alphanumeric string.
-        
-        Returns:
-            The newly created guest Player instance.
-        """
-        # Generate random suffix for username
-        suffix = ''.join(
-            secrets.choice(string.ascii_uppercase + string.digits)
-            for _ in range(6)
-        )
-        username = f"Guest-{suffix}"
-        
-        # Ensure username is unique (very unlikely to collide with 6 chars)
-        while Player.objects.filter(username=username).exists():
-            suffix = ''.join(
-                secrets.choice(string.ascii_uppercase + string.digits)
-                for _ in range(6)
-            )
-            username = f"Guest-{suffix}"
-        
-        # Create the guest player
-        guest_player = Player.objects.create_user(
-            username=username,
-            is_guest=True,
-        )
-        
-        return guest_player
+

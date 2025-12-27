@@ -1,0 +1,139 @@
+{% extends 'game/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Sign Up" %} - RogueSweeper{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="card bg-dark border-primary shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus me-2"></i>{% trans "Create Account" %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label text-light">
+                                <i class="bi bi-envelope me-1"></i>{{ form.email.label }}
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if form.email.help_text %}
+                                <div class="form-text text-muted">{{ form.email.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label text-light">
+                                <i class="bi bi-person me-1"></i>{{ form.username.label }}
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if form.username.help_text %}
+                                <div class="form-text text-muted">{{ form.username.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label text-light">
+                                <i class="bi bi-lock me-1"></i>{{ form.password1.label }}
+                            </label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password1.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password Requirements -->
+                        <div class="mb-3">
+                            <div class="card bg-secondary border-0">
+                                <div class="card-body py-2 px-3">
+                                    <small class="text-light">
+                                        <i class="bi bi-info-circle me-1"></i>{% trans "Password Requirements:" %}
+                                    </small>
+                                    <ul class="mb-0 mt-1 small text-light" style="padding-left: 1.5rem;">
+                                        <li>{% trans "At least 8 characters long" %}</li>
+                                        <li>{% trans "At least one uppercase letter (A-Z)" %}</li>
+                                        <li>{% trans "At least one lowercase letter (a-z)" %}</li>
+                                        <li>{% trans "At least one digit (0-9)" %}</li>
+                                        <li>{% trans "At least one special character (!@#$%^&*)" %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Confirm Password -->
+                        <div class="mb-4">
+                            <label for="id_password2" class="form-label text-light">
+                                <i class="bi bi-lock-fill me-1"></i>{{ form.password2.label }}
+                            </label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password2.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus me-2"></i>{% trans "Sign Up" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-transparent text-center py-3 border-primary">
+                    <span class="text-muted">{% trans "Already have an account?" %}</span>
+                    <a href="{% url 'game:login' %}" class="text-primary text-decoration-none ms-1">
+                        {% trans "Log In" %}
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Back to Game -->
+            <div class="text-center mt-3">
+                <a href="{% url 'game:index' %}" class="text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Game" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

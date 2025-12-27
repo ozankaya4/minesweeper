@@ -8,6 +8,13 @@ Author: RogueSweeper Team
 
 from django.urls import path
 
+from .auth_views import (
+    LoginView,
+    LogoutView,
+    PasswordResetConfirmView,
+    PasswordResetRequestView,
+    SignUpView,
+)
 from .views import (
     AbandonGameView,
     GameActionView,
@@ -27,6 +34,13 @@ urlpatterns = [
     # Template views
     path('', HomeView.as_view(), name='index'),
     path('switch-language/', SwitchLanguageView.as_view(), name='switch-language'),
+    
+    # Authentication views
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
+    path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     
     # Game session management
     path('api/start/', StartGameView.as_view(), name='start-game'),

@@ -218,3 +218,220 @@ msgstr "Sonsuz seviyeli roguelike bir Mayın Tarlası."
 
 msgid "Click New Game to start your run!"
 msgstr "Yeni Oyun'a tıklayarak başlayın!"
+
+# =============================================================================
+# Authentication Pages
+# =============================================================================
+
+msgid "Sign Up"
+msgstr "Kayıt Ol"
+
+msgid "Log In"
+msgstr "Giriş Yap"
+
+msgid "Guest"
+msgstr "Misafir"
+
+msgid "Create Account"
+msgstr "Hesap Oluştur"
+
+msgid "Email"
+msgstr "E-posta"
+
+msgid "Enter your email"
+msgstr "E-postanızı girin"
+
+msgid "We'll use this for password recovery."
+msgstr "Şifre kurtarma için kullanılacaktır."
+
+msgid "Username"
+msgstr "Kullanıcı Adı"
+
+msgid "Choose a username"
+msgstr "Bir kullanıcı adı seçin"
+
+msgid "3-30 characters. Letters, digits and @/./+/-/_ only."
+msgstr "3-30 karakter. Sadece harfler, rakamlar ve @/./+/-/_ karakterleri."
+
+msgid "Password"
+msgstr "Şifre"
+
+msgid "Create a password"
+msgstr "Bir şifre oluşturun"
+
+msgid "Confirm Password"
+msgstr "Şifreyi Onayla"
+
+msgid "Confirm your password"
+msgstr "Şifrenizi onaylayın"
+
+msgid "Password Requirements:"
+msgstr "Şifre Gereksinimleri:"
+
+msgid "At least 8 characters long"
+msgstr "En az 8 karakter uzunluğunda"
+
+msgid "At least one uppercase letter (A-Z)"
+msgstr "En az bir büyük harf (A-Z)"
+
+msgid "At least one lowercase letter (a-z)"
+msgstr "En az bir küçük harf (a-z)"
+
+msgid "At least one digit (0-9)"
+msgstr "En az bir rakam (0-9)"
+
+msgid "At least one special character (!@#$%^&*)"
+msgstr "En az bir özel karakter (!@#$%^&*)"
+
+msgid "Already have an account?"
+msgstr "Zaten hesabınız var mı?"
+
+msgid "Don't have an account?"
+msgstr "Hesabınız yok mu?"
+
+msgid "Back to Game"
+msgstr "Oyuna Dön"
+
+msgid "Back to Game (Play as Guest)"
+msgstr "Oyuna Dön (Misafir Olarak Oyna)"
+
+msgid "Email or Username"
+msgstr "E-posta veya Kullanıcı Adı"
+
+msgid "Enter your email or username"
+msgstr "E-posta veya kullanıcı adınızı girin"
+
+msgid "Enter your password"
+msgstr "Şifrenizi girin"
+
+msgid "Remember me"
+msgstr "Beni hatırla"
+
+msgid "Forgot Password?"
+msgstr "Şifremi Unuttum?"
+
+msgid "Reset Password"
+msgstr "Şifreyi Sıfırla"
+
+msgid "Enter your email address and we'll send you a link to reset your password."
+msgstr "E-posta adresinizi girin, şifrenizi sıfırlamanız için size bir bağlantı göndereceğiz."
+
+msgid "Enter your email address"
+msgstr "E-posta adresinizi girin"
+
+msgid "Enter the email address associated with your account."
+msgstr "Hesabınızla ilişkili e-posta adresini girin."
+
+msgid "Send Reset Link"
+msgstr "Sıfırlama Bağlantısı Gönder"
+
+msgid "Remember your password?"
+msgstr "Şifrenizi hatırlıyor musunuz?"
+
+msgid "Set New Password"
+msgstr "Yeni Şifre Belirle"
+
+msgid "New Password"
+msgstr "Yeni Şifre"
+
+msgid "Enter new password"
+msgstr "Yeni şifre girin"
+
+msgid "Confirm New Password"
+msgstr "Yeni Şifreyi Onayla"
+
+msgid "Confirm new password"
+msgstr "Yeni şifreyi onaylayın"
+
+msgid "Invalid Reset Link"
+msgstr "Geçersiz Sıfırlama Bağlantısı"
+
+msgid "This password reset link is invalid or has expired. Please request a new one."
+msgstr "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeni bir tane isteyin."
+
+msgid "Request New Link"
+msgstr "Yeni Bağlantı İste"
+
+msgid "Back to Login"
+msgstr "Giriş Sayfasına Dön"
+
+# Password Reset Email
+msgid "Password Reset Request"
+msgstr "Şifre Sıfırlama İsteği"
+
+msgid "Hello"
+msgstr "Merhaba"
+
+msgid "We received a request to reset your password for your RogueSweeper account. Click the button below to set a new password:"
+msgstr "RogueSweeper hesabınızın şifresini sıfırlamak için bir istek aldık. Yeni bir şifre belirlemek için aşağıdaki düğmeye tıklayın:"
+
+msgid "Reset My Password"
+msgstr "Şifremi Sıfırla"
+
+msgid "This link will expire in 24 hours for security reasons."
+msgstr "Bu bağlantı güvenlik nedeniyle 24 saat içinde sona erecektir."
+
+msgid "If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged."
+msgstr "Şifre sıfırlama isteğinde bulunmadıysanız, bu e-postayı güvenle yok sayabilirsiniz. Şifreniz değişmeyecektir."
+
+msgid "If the button doesn't work, copy and paste this link into your browser:"
+msgstr "Düğme çalışmazsa, bu bağlantıyı kopyalayıp tarayıcınıza yapıştırın:"
+
+msgid "A roguelike Minesweeper game"
+msgstr "Roguelike bir Mayın Tarlası oyunu"
+
+# Auth success messages
+msgid "Account created successfully! Please log in."
+msgstr "Hesap başarıyla oluşturuldu! Lütfen giriş yapın."
+
+msgid "Welcome back, {}!"
+msgstr "Tekrar hoş geldin, {}!"
+
+msgid "You have been logged out."
+msgstr "Çıkış yaptınız."
+
+msgid "If an account with that email exists, we've sent password reset instructions."
+msgstr "Bu e-posta ile bir hesap varsa, şifre sıfırlama talimatları gönderdik."
+
+msgid "This password reset link is invalid or has expired."
+msgstr "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+
+msgid "Your password has been reset successfully! Please log in."
+msgstr "Şifreniz başarıyla sıfırlandı! Lütfen giriş yapın."
+
+# Form validation errors
+msgid "An account with this email already exists."
+msgstr "Bu e-posta ile bir hesap zaten mevcut."
+
+msgid "Username must be at least 3 characters long."
+msgstr "Kullanıcı adı en az 3 karakter olmalıdır."
+
+msgid "This username is already taken."
+msgstr "Bu kullanıcı adı zaten alınmış."
+
+msgid "Password must be at least 8 characters long."
+msgstr "Şifre en az 8 karakter uzunluğunda olmalıdır."
+
+msgid "Password must contain at least one uppercase letter."
+msgstr "Şifre en az bir büyük harf içermelidir."
+
+msgid "Password must contain at least one lowercase letter."
+msgstr "Şifre en az bir küçük harf içermelidir."
+
+msgid "Password must contain at least one digit."
+msgstr "Şifre en az bir rakam içermelidir."
+
+msgid "Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)."
+msgstr "Şifre en az bir özel karakter içermelidir (!@#$%^&*()_+-=[]{}|;:,.<>?)."
+
+msgid "Passwords don't match."
+msgstr "Şifreler eşleşmiyor."
+
+msgid "Invalid email/username or password. Please try again."
+msgstr "Geçersiz e-posta/kullanıcı adı veya şifre. Lütfen tekrar deneyin."
+
+msgid "This account has been deactivated."
+msgstr "Bu hesap devre dışı bırakılmış."
+
+msgid "Reset Your RogueSweeper Password"
+msgstr "RogueSweeper Şifrenizi Sıfırlayın"

@@ -664,6 +664,8 @@ class GameEngine:
         
         revealed_set = GameEngine._to_coord_set(board.get("revealed", []))
         flagged_set = GameEngine._to_coord_set(board.get("flagged", []))
+        immune_set = GameEngine._to_coord_set(board.get("immune_flags", []))
+        all_flags = flagged_set | immune_set  # Combine regular and immune flags
         
         # Can only chord on revealed cells
         if (row, col) not in revealed_set:
@@ -675,23 +677,16 @@ class GameEngine:
         if adjacent_count == 0:
             return board
         
-        # Count adjacent flags
-        adjacent_flags = 0
+        # Get all neighbors
         neighbors: list[tuple[int, int]] = []
         for dr, dc in GameEngine.DIRECTIONS:
             nr, nc = row + dr, col + dc
             if 0 <= nr < rows and 0 <= nc < cols:
                 neighbors.append((nr, nc))
-                if (nr, nc) in flagged_set:
-                    adjacent_flags += 1
         
-        # Only chord if flag count matches adjacent mine count
-        if adjacent_flags != adjacent_count:
-            return board
-        
-        # Reveal all unflagged, unrevealed neighbors
+        # Reveal all unflagged, unrevealed neighbors (risky if flags are wrong!)
         for nr, nc in neighbors:
-            if (nr, nc) not in flagged_set and (nr, nc) not in revealed_set:
+            if (nr, nc) not in all_flags and (nr, nc) not in revealed_set:
                 board = GameEngine.reveal_cell(board, nr, nc)
                 # Check if game ended
                 if board.get("game_over", False):

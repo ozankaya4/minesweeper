@@ -205,3 +205,29 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
 }
+
+
+# =============================================================================
+# Email Configuration (SendGrid)
+# =============================================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@roguesweeper.com')
+
+
+# =============================================================================
+# Authentication Settings
+# =============================================================================
+
+LOGIN_URL = 'game:login'
+LOGIN_REDIRECT_URL = 'game:index'
+LOGOUT_REDIRECT_URL = 'game:index'
+
+# Password reset token valid for 24 hours
+PASSWORD_RESET_TIMEOUT = 86400
+
