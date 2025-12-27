@@ -7,6 +7,7 @@ Author: RogueSweeper Team
 """
 
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 from .auth_views import (
     LoginView,
@@ -23,6 +24,7 @@ from .views import (
     LeaderboardView,
     NextLevelView,
     PlayerStatsView,
+    SaveProgressView,
     StartGameView,
     SwitchLanguageView,
     UpdateTimeView,
@@ -42,17 +44,18 @@ urlpatterns = [
     path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
     path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     
-    # Game session management
-    path('api/start/', StartGameView.as_view(), name='start-game'),
-    path('api/session/', GameSessionView.as_view(), name='game-session'),
-    path('api/abandon/', AbandonGameView.as_view(), name='abandon-game'),
+    # Game session management (csrf_exempt for guest access)
+    path('api/start/', csrf_exempt(StartGameView.as_view()), name='start-game'),
+    path('api/session/', csrf_exempt(GameSessionView.as_view()), name='game-session'),
+    path('api/abandon/', csrf_exempt(AbandonGameView.as_view()), name='abandon-game'),
+    path('api/save-progress/', csrf_exempt(SaveProgressView.as_view()), name='save-progress'),
     
-    # Game actions
-    path('api/action/', GameActionView.as_view(), name='game-action'),
-    path('api/next-level/', NextLevelView.as_view(), name='next-level'),
-    path('api/update-time/', UpdateTimeView.as_view(), name='update-time'),
+    # Game actions (csrf_exempt for guest access)
+    path('api/action/', csrf_exempt(GameActionView.as_view()), name='game-action'),
+    path('api/next-level/', csrf_exempt(NextLevelView.as_view()), name='next-level'),
+    path('api/update-time/', csrf_exempt(UpdateTimeView.as_view()), name='update-time'),
     
-    # Stats and leaderboard
-    path('api/leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
-    path('api/stats/', PlayerStatsView.as_view(), name='player-stats'),
+    # Stats and leaderboard (csrf_exempt for guest access)
+    path('api/leaderboard/', csrf_exempt(LeaderboardView.as_view()), name='leaderboard'),
+    path('api/stats/', csrf_exempt(PlayerStatsView.as_view()), name='player-stats'),
 ]

@@ -87,6 +87,13 @@
                             <i class="bi bi-arrow-right-circle me-2"></i>{% trans "Next Level" %}
                         </button>
                         
+                        {% if user.is_authenticated %}
+                        <!-- Save Progress Button (Logged-in users only) -->
+                        <button id="btn-save-progress" class="btn btn-outline-primary btn-lg d-none">
+                            <i class="bi bi-save me-2"></i>{% trans "Save Progress" %}
+                        </button>
+                        {% endif %}
+                        
                         <!-- Abandon Game Button -->
                         <button id="btn-abandon" class="btn btn-outline-danger btn-sm mt-2 d-none">
                             <i class="bi bi-x-circle me-2"></i>{% trans "Abandon Run" %}
@@ -208,7 +215,8 @@
             updateTime: "{% url 'game:update-time' %}",
             leaderboard: "{% url 'game:leaderboard' %}",
             stats: "{% url 'game:player-stats' %}",
-            abandon: "{% url 'game:abandon-game' %}"
+            abandon: "{% url 'game:abandon-game' %}",
+            saveProgress: "{% url 'game:save-progress' %}"
         },
         messages: {
             won: "{% trans 'You Won! Click Next Level to continue.' %}",
@@ -234,8 +242,12 @@
             clueMode: "{% trans 'Clue Mode' %}",
             welcome: "{% trans 'Welcome to RogueSweeper!' %}",
             welcomeDesc: "{% trans 'A roguelike Minesweeper with infinite levels.' %}",
-            welcomeAction: "{% trans 'Click New Game to start your run!' %}"
-        }
+            welcomeAction: "{% trans 'Click New Game to start your run!' %}",
+            progressSaved: "{% trans 'Progress saved successfully!' %}",
+            progressSavedWithHighScore: "{% trans 'Progress saved! New high score!' %}",
+            saveError: "{% trans 'Could not save progress.' %}"
+        },
+        isAuthenticated: {% if user.is_authenticated %}true{% else %}false{% endif %}
     };
 </script>
 <script src="{% static 'game/js/game.js' %}"></script>

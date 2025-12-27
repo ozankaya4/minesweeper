@@ -11,6 +11,7 @@ Author: RogueSweeper Team
 from __future__ import annotations
 
 import json
+import uuid
 from typing import Any
 
 from django.conf import settings
@@ -19,10 +20,72 @@ from django.shortcuts import redirect, render
 from django.utils import timezone, translation
 from django.views import View
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+# =============================================================================
+# Custom Permissions
+# =============================================================================
+
+class IsAuthenticatedOrGuest(BasePermission):
+    """
+    Allow authenticated users or guests (via session).
+    
+    Guests can play the game but their scores won't be saved.
+    This permission class ensures everyone can access the game.
+    """
+    
+    def has_permission(self, request, view):
+        # Allow everyone - guests and authenticated users alike
+        # The view logic handles the difference between them
+        return True
+
+
+def is_guest_user(request: Request) -> bool:
+    """Check if the current request is from a guest user."""
+    return not request.user.is_authenticated
+
+
+def _get_session(request: Request):
+    """Get the Django session from a DRF or Django request."""
+    # DRF wraps the Django request, session is on the underlying request
+    if hasattr(request, '_request'):
+        return request._request.session
+    return request.session
+
+
+def get_guest_session_data(request: Request) -> dict:
+    """Get or create guest game session data from the request session."""
+    session = _get_session(request)
+    
+    # Ensure session exists
+    if not session.session_key:
+        session.create()
+    
+    if 'guest_game' not in session:
+        session['guest_game'] = {
+            'id': str(uuid.uuid4()),
+            'level_number': 1,
+            'score': 0,
+            'clues_remaining': get_clues_for_level(1),
+            'time_elapsed': 0,
+            'cells_revealed': 0,
+            'flags_placed': 0,
+            'board_state': {},
+            'is_active': False,
+            'status': 'new',
+        }
+    return session['guest_game']
+
+
+def save_guest_session_data(request: Request, data: dict) -> None:
+    """Save guest game session data to the request session."""
+    session = _get_session(request)
+    session['guest_game'] = data
+    session.modified = True
 
 
 # =============================================================================
@@ -121,7 +184,7 @@ class SwitchLanguageView(View):
 
 
 from .engine import GameEngine
-from .models import GameSession, Player, Score
+from .models import GameSession, Player, Score, get_clues_for_level
 from .serializers import (
     GameActionSerializer,
     GameSessionSerializer,
@@ -150,7 +213,7 @@ class StartGameView(APIView):
         - 400: Invalid request
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def post(self, request: Request) -> Response:
         """
@@ -163,6 +226,12 @@ class StartGameView(APIView):
         serializer.is_valid(raise_exception=True)
         
         force_new = serializer.validated_data.get('force_new', False)
+        
+        # Handle guest users
+        if is_guest_user(request):
+            return self._handle_guest_start(request, force_new)
+        
+        # Handle authenticated users
         player = request.user
         
         # Check for existing active session
@@ -183,7 +252,7 @@ class StartGameView(APIView):
         new_session = GameSession.objects.create(
             player=player,
             level_number=1,
-            clues_remaining=getattr(settings, 'ROGUESWEEPER_CLUES_PER_LEVEL', 1),
+            clues_remaining=get_clues_for_level(1),
             status=GameSession.SessionStatus.ACTIVE,
             is_active=True,
         )
@@ -193,6 +262,59 @@ class StartGameView(APIView):
         
         response_serializer = GameSessionSerializer(new_session)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    
+    def _handle_guest_start(self, request: Request, force_new: bool) -> Response:
+        """Handle game start for guest users (session-based)."""
+        guest_data = get_guest_session_data(request)
+        
+        # Return existing active session if not forcing new
+        if guest_data.get('is_active') and not force_new:
+            return Response(self._format_guest_response(guest_data), status=status.HTTP_200_OK)
+        
+        # Create new guest session
+        guest_data = {
+            'id': str(uuid.uuid4()),
+            'level_number': 1,
+            'score': 0,
+            'clues_remaining': get_clues_for_level(1),
+            'time_elapsed': 0,
+            'cells_revealed': 0,
+            'flags_placed': 0,
+            'board_state': {},
+            'is_active': True,
+            'status': 'active',
+        }
+        save_guest_session_data(request, guest_data)
+        
+        return Response(self._format_guest_response(guest_data), status=status.HTTP_201_CREATED)
+    
+    def _format_guest_response(self, guest_data: dict) -> dict:
+        """Format guest session data for API response."""
+        board = guest_data.get('board_state', {})
+        level = guest_data['level_number']
+        rows = board.get('rows', getattr(settings, 'ROGUESWEEPER_BASE_ROWS', 8))
+        cols = board.get('cols', getattr(settings, 'ROGUESWEEPER_BASE_COLS', 8))
+        
+        return {
+            'id': guest_data['id'],
+            'level_number': level,
+            'score': guest_data['score'],
+            'clues_remaining': guest_data['clues_remaining'],
+            'clues_total': get_clues_for_level(level),
+            'time_elapsed': guest_data['time_elapsed'],
+            'cells_revealed': guest_data['cells_revealed'],
+            'flags_placed': guest_data['flags_placed'],
+            'is_active': guest_data['is_active'],
+            'status': guest_data['status'],
+            'board': GameEngine.render_for_frontend(board) if board.get('initialized') else {
+                'rows': rows,
+                'cols': cols,
+                'cells': [['hidden'] * cols for _ in range(rows)],
+                'game_over': False,
+                'won': False,
+            },
+            'is_guest': True,
+        }
 
 
 class GameSessionView(APIView):
@@ -206,12 +328,23 @@ class GameSessionView(APIView):
         - 404: No active session found
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def get(self, request: Request) -> Response:
         """
         Get the current active game session.
         """
+        # Handle guest users
+        if is_guest_user(request):
+            guest_data = get_guest_session_data(request)
+            if not guest_data.get('is_active'):
+                return Response(
+                    {"detail": "No active game session found. Start a new game."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            return Response(self._format_guest_response(guest_data), status=status.HTTP_200_OK)
+        
+        # Handle authenticated users
         player = request.user
         active_session = GameSession.get_active_session(player)
         
@@ -223,6 +356,34 @@ class GameSessionView(APIView):
         
         serializer = GameSessionSerializer(active_session)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def _format_guest_response(self, guest_data: dict) -> dict:
+        """Format guest session data for API response."""
+        board = guest_data.get('board_state', {})
+        level = guest_data['level_number']
+        rows = board.get('rows', getattr(settings, 'ROGUESWEEPER_BASE_ROWS', 8))
+        cols = board.get('cols', getattr(settings, 'ROGUESWEEPER_BASE_COLS', 8))
+        
+        return {
+            'id': guest_data['id'],
+            'level_number': level,
+            'score': guest_data['score'],
+            'clues_remaining': guest_data['clues_remaining'],
+            'clues_total': get_clues_for_level(level),
+            'time_elapsed': guest_data['time_elapsed'],
+            'cells_revealed': guest_data['cells_revealed'],
+            'flags_placed': guest_data['flags_placed'],
+            'is_active': guest_data['is_active'],
+            'status': guest_data['status'],
+            'board': GameEngine.render_for_frontend(board) if board.get('initialized') else {
+                'rows': rows,
+                'cols': cols,
+                'cells': [['hidden'] * cols for _ in range(rows)],
+                'game_over': False,
+                'won': False,
+            },
+            'is_guest': True,
+        }
 
 
 class GameActionView(APIView):
@@ -244,7 +405,7 @@ class GameActionView(APIView):
         - 404: No active session found
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def post(self, request: Request) -> Response:
         """
@@ -261,7 +422,11 @@ class GameActionView(APIView):
         col = serializer.validated_data['col']
         action = serializer.validated_data['action']
         
-        # Get active session
+        # Handle guest users
+        if is_guest_user(request):
+            return self._handle_guest_action(request, row, col, action)
+        
+        # Get active session for authenticated users
         player = request.user
         session = GameSession.get_active_session(player)
         
@@ -350,7 +515,7 @@ class GameActionView(APIView):
             session.is_active = not won  # Keep active if won (for next level)
             
             # Calculate score
-            clues_per_level = getattr(settings, 'ROGUESWEEPER_CLUES_PER_LEVEL', 1)
+            clues_per_level = get_clues_for_level(session.level_number)
             clues_used_count = clues_per_level - session.clues_remaining
             
             level_score = GameEngine.calculate_score(
@@ -381,6 +546,120 @@ class GameActionView(APIView):
         # Return updated session
         response_serializer = GameSessionSerializer(session)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+    
+    def _handle_guest_action(self, request: Request, row: int, col: int, action: str) -> Response:
+        """Handle game action for guest users."""
+        guest_data = get_guest_session_data(request)
+        
+        if not guest_data.get('is_active'):
+            return Response(
+                {"detail": "No active game session found. Start a new game."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        board = guest_data.get('board_state', {})
+        level = guest_data['level_number']
+        
+        # Calculate grid size and mine count for this level
+        base_rows = getattr(settings, 'ROGUESWEEPER_BASE_ROWS', 8)
+        base_cols = getattr(settings, 'ROGUESWEEPER_BASE_COLS', 8)
+        base_mines = getattr(settings, 'ROGUESWEEPER_BASE_MINES', 10)
+        row_inc = getattr(settings, 'ROGUESWEEPER_ROW_INCREMENT', 1)
+        col_inc = getattr(settings, 'ROGUESWEEPER_COL_INCREMENT', 1)
+        mine_inc = getattr(settings, 'ROGUESWEEPER_MINE_INCREMENT', 2)
+        max_rows = getattr(settings, 'ROGUESWEEPER_MAX_ROWS', 30)
+        max_cols = getattr(settings, 'ROGUESWEEPER_MAX_COLS', 30)
+        
+        rows = min(base_rows + (level - 1) * row_inc, max_rows)
+        cols = min(base_cols + (level - 1) * col_inc, max_cols)
+        mine_count = base_mines + (level - 1) * mine_inc
+        
+        # Initialize board if empty
+        if not board:
+            board = {'rows': rows, 'cols': cols, 'initialized': False}
+        
+        # Check if game is already over
+        if board.get('game_over', False):
+            return Response(
+                {"detail": "Game is already over. Start a new game or advance to next level."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Process action
+        try:
+            if action == 'reveal':
+                board = GameEngine.reveal_cell(board, row, col, mine_count)
+            elif action == 'flag':
+                board = GameEngine.toggle_flag(board, row, col)
+            elif action == 'chord':
+                board = GameEngine.chord_reveal(board, row, col)
+            elif action == 'clue':
+                if guest_data['clues_remaining'] <= 0:
+                    return Response(
+                        {"detail": "No clues remaining for this level."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                board = GameEngine.apply_clue(board, row, col, mine_count)
+                guest_data['clues_remaining'] -= 1
+            else:
+                return Response(
+                    {"detail": f"Unknown action: {action}"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except ValueError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update guest session data
+        guest_data['board_state'] = board
+        guest_data['cells_revealed'] = len(board.get('revealed', []))
+        guest_data['flags_placed'] = len(board.get('flagged', []))
+        
+        # Check for game over
+        if board.get('game_over', False):
+            won = board.get('won', False)
+            guest_data['status'] = 'won' if won else 'lost'
+            guest_data['is_active'] = won  # Keep active if won for next level
+            
+            # Calculate score (for display only, not saved)
+            clues_per_level = getattr(settings, 'ROGUESWEEPER_CLUES_PER_LEVEL', 1)
+            clues_used = clues_per_level - guest_data['clues_remaining']
+            level_score = GameEngine.calculate_score(
+                level=guest_data['level_number'],
+                cells_revealed=guest_data['cells_revealed'],
+                time_elapsed=guest_data['time_elapsed'],
+                clues_used=clues_used,
+                won=won
+            )
+            guest_data['score'] += level_score
+        
+        save_guest_session_data(request, guest_data)
+        return Response(self._format_guest_response(guest_data), status=status.HTTP_200_OK)
+    
+    def _format_guest_response(self, guest_data: dict) -> dict:
+        """Format guest session data for API response."""
+        board = guest_data.get('board_state', {})
+        rows = board.get('rows', getattr(settings, 'ROGUESWEEPER_BASE_ROWS', 8))
+        cols = board.get('cols', getattr(settings, 'ROGUESWEEPER_BASE_COLS', 8))
+        
+        return {
+            'id': guest_data['id'],
+            'level_number': guest_data['level_number'],
+            'score': guest_data['score'],
+            'clues_remaining': guest_data['clues_remaining'],
+            'time_elapsed': guest_data['time_elapsed'],
+            'cells_revealed': guest_data['cells_revealed'],
+            'flags_placed': guest_data['flags_placed'],
+            'is_active': guest_data['is_active'],
+            'status': guest_data['status'],
+            'board': GameEngine.render_for_frontend(board) if board.get('initialized') else {
+                'rows': rows,
+                'cols': cols,
+                'cells': [['hidden'] * cols for _ in range(rows)],
+                'game_over': False,
+                'won': False,
+            },
+            'is_guest': True,
+        }
 
 
 class NextLevelView(APIView):
@@ -400,7 +679,7 @@ class NextLevelView(APIView):
         - 404: No active session found
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def post(self, request: Request) -> Response:
         """
@@ -408,6 +687,10 @@ class NextLevelView(APIView):
         """
         serializer = NextLevelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
+        # Handle guest users
+        if is_guest_user(request):
+            return self._handle_guest_next_level(request)
         
         player = request.user
         
@@ -435,6 +718,66 @@ class NextLevelView(APIView):
         
         response_serializer = GameSessionSerializer(session)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+    
+    def _handle_guest_next_level(self, request: Request) -> Response:
+        """Handle next level for guest users."""
+        guest_data = get_guest_session_data(request)
+        
+        if guest_data.get('status') != 'won':
+            return Response(
+                {"detail": "No won game session found. Win a level first."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Advance to next level
+        new_level = guest_data['level_number'] + 1
+        guest_data['level_number'] = new_level
+        guest_data['clues_remaining'] = get_clues_for_level(new_level)
+        guest_data['time_elapsed'] = 0
+        guest_data['cells_revealed'] = 0
+        guest_data['flags_placed'] = 0
+        guest_data['board_state'] = {}
+        guest_data['is_active'] = True
+        guest_data['status'] = 'active'
+        
+        save_guest_session_data(request, guest_data)
+        return Response(self._format_guest_response(guest_data), status=status.HTTP_200_OK)
+    
+    def _format_guest_response(self, guest_data: dict) -> dict:
+        """Format guest session data for API response."""
+        board = guest_data.get('board_state', {})
+        level = guest_data['level_number']
+        
+        base_rows = getattr(settings, 'ROGUESWEEPER_BASE_ROWS', 8)
+        base_cols = getattr(settings, 'ROGUESWEEPER_BASE_COLS', 8)
+        row_inc = getattr(settings, 'ROGUESWEEPER_ROW_INCREMENT', 1)
+        col_inc = getattr(settings, 'ROGUESWEEPER_COL_INCREMENT', 1)
+        max_rows = getattr(settings, 'ROGUESWEEPER_MAX_ROWS', 30)
+        max_cols = getattr(settings, 'ROGUESWEEPER_MAX_COLS', 30)
+        
+        rows = min(base_rows + (level - 1) * row_inc, max_rows)
+        cols = min(base_cols + (level - 1) * col_inc, max_cols)
+        
+        return {
+            'id': guest_data['id'],
+            'level_number': level,
+            'score': guest_data['score'],
+            'clues_remaining': guest_data['clues_remaining'],
+            'clues_total': get_clues_for_level(level),
+            'time_elapsed': guest_data['time_elapsed'],
+            'cells_revealed': guest_data['cells_revealed'],
+            'flags_placed': guest_data['flags_placed'],
+            'is_active': guest_data['is_active'],
+            'status': guest_data['status'],
+            'board': GameEngine.render_for_frontend(board) if board.get('initialized') else {
+                'rows': rows,
+                'cols': cols,
+                'cells': [['hidden'] * cols for _ in range(rows)],
+                'game_over': False,
+                'won': False,
+            },
+            'is_guest': True,
+        }
 
 
 class UpdateTimeView(APIView):
@@ -451,7 +794,7 @@ class UpdateTimeView(APIView):
     This is called periodically by the frontend to track game duration.
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def post(self, request: Request) -> Response:
         """
@@ -471,6 +814,15 @@ class UpdateTimeView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # Handle guest users
+        if is_guest_user(request):
+            guest_data = get_guest_session_data(request)
+            if guest_data.get('is_active'):
+                guest_data['time_elapsed'] = time_elapsed
+                save_guest_session_data(request, guest_data)
+            return Response({"time_elapsed": time_elapsed}, status=status.HTTP_200_OK)
+        
+        # Handle authenticated users
         player = request.user
         session = GameSession.get_active_session(player)
         
@@ -498,6 +850,8 @@ class LeaderboardView(APIView):
     Response:
         - 200: Returns list of top scores
     """
+    
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def get(self, request: Request) -> Response:
         """
@@ -537,6 +891,7 @@ class PlayerStatsView(APIView):
     
     Response:
         - 200: Returns player stats and best score
+        - 403: Guest users cannot view stats
     """
     
     permission_classes = [IsAuthenticated]
@@ -544,6 +899,9 @@ class PlayerStatsView(APIView):
     def get(self, request: Request) -> Response:
         """
         Get the current player's statistics.
+        
+        Note: This endpoint requires authentication. Guest users
+        cannot view stats since their data isn't saved.
         """
         player = request.user
         best_score = Score.get_player_best(player)
@@ -562,6 +920,61 @@ class PlayerStatsView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
+class SaveProgressView(APIView):
+    """
+    API endpoint to save the current game progress for logged-in users.
+    
+    POST /api/save-progress/
+    
+    This saves the player's current level and updates high score if applicable.
+    Only available for authenticated (non-guest) users.
+    
+    Response:
+        - 200: Progress saved successfully
+        - 401: User must be logged in
+        - 404: No active session found
+    """
+    
+    permission_classes = [IsAuthenticatedOrGuest]
+    
+    def post(self, request: Request) -> Response:
+        """
+        Save the current game progress.
+        """
+        # Guest users cannot save progress
+        if is_guest_user(request):
+            return Response(
+                {"detail": "You must be logged in to save progress."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        # Get authenticated user's active session
+        player = request.user
+        session = GameSession.get_active_session(player)
+        
+        if not session:
+            return Response(
+                {"detail": "No active game session found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Save current level to player
+        player.current_level = session.level_number
+        
+        # Update high score if current score is higher
+        score_updated = player.update_high_score(session.score)
+        
+        player.save(update_fields=['current_level', 'updated_at'])
+        
+        return Response({
+            "detail": "Progress saved successfully.",
+            "level": session.level_number,
+            "score": session.score,
+            "high_score": player.high_score,
+            "high_score_updated": score_updated
+        }, status=status.HTTP_200_OK)
+
+
 class AbandonGameView(APIView):
     """
     API endpoint to abandon the current game session.
@@ -573,12 +986,33 @@ class AbandonGameView(APIView):
         - 404: No active session to abandon
     """
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrGuest]
     
     def post(self, request: Request) -> Response:
         """
         Abandon the current active game session.
         """
+        # Handle guest users
+        if is_guest_user(request):
+            guest_data = get_guest_session_data(request)
+            if not guest_data.get('is_active'):
+                return Response(
+                    {"detail": "No active game session to abandon."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            # Reset guest session (no score saved for guests)
+            guest_data['is_active'] = False
+            guest_data['status'] = 'abandoned'
+            if guest_data.get('board_state'):
+                guest_data['board_state']['game_over'] = True
+                guest_data['board_state']['won'] = False
+            save_guest_session_data(request, guest_data)
+            return Response(
+                {"detail": "Game abandoned successfully."},
+                status=status.HTTP_200_OK
+            )
+        
+        # Handle authenticated users
         player = request.user
         session = GameSession.get_active_session(player)
         

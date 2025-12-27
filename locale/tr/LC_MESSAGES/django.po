@@ -435,3 +435,16 @@ msgstr "Bu hesap devre dışı bırakılmış."
 
 msgid "Reset Your RogueSweeper Password"
 msgstr "RogueSweeper Şifrenizi Sıfırlayın"
+
+# Save Progress feature
+msgid "Save Progress"
+msgstr "İlerlemeyi Kaydet"
+
+msgid "Progress saved successfully!"
+msgstr "İlerleme başarıyla kaydedildi!"
+
+msgid "Progress saved! New high score!"
+msgstr "İlerleme kaydedildi! Yeni yüksek puan!"
+
+msgid "Could not save progress."
+msgstr "İlerleme kaydedilemedi."

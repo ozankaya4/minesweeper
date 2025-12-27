@@ -266,6 +266,7 @@ const RogueSweeper = (function() {
         elements.btnClue = document.getElementById('btn-clue');
         elements.btnNextLevel = document.getElementById('btn-next-level');
         elements.btnAbandon = document.getElementById('btn-abandon');
+        elements.btnSaveProgress = document.getElementById('btn-save-progress');
         
         // Modals
         elements.leaderboardModal = document.getElementById('leaderboardModal');
@@ -290,6 +291,11 @@ const RogueSweeper = (function() {
         // Abandon button
         if (elements.btnAbandon) {
             elements.btnAbandon.addEventListener('click', abandonGame);
+        }
+        
+        // Save Progress button (only for logged-in users)
+        if (elements.btnSaveProgress) {
+            elements.btnSaveProgress.addEventListener('click', saveProgress);
         }
         
         // Leaderboard link
@@ -360,6 +366,9 @@ const RogueSweeper = (function() {
                 state.isGameActive = true;
                 startTimer();
                 elements.btnAbandon.classList.remove('d-none');
+                if (elements.btnSaveProgress) {
+                    elements.btnSaveProgress.classList.remove('d-none');
+                }
             } else {
                 handleGameOver(data);
             }
@@ -395,6 +404,9 @@ const RogueSweeper = (function() {
             startTimer();
             
             elements.btnAbandon.classList.remove('d-none');
+            if (elements.btnSaveProgress) {
+                elements.btnSaveProgress.classList.remove('d-none');
+            }
             elements.btnNextLevel.classList.add('d-none');
             elements.gameStatus.textContent = getMessage('playing', 'Playing');
             elements.gameStatus.className = 'badge bg-success';
@@ -736,6 +748,9 @@ const RogueSweeper = (function() {
             // Show next level button
             elements.btnNextLevel.classList.remove('d-none');
             elements.btnAbandon.classList.add('d-none');
+            if (elements.btnSaveProgress) {
+                elements.btnSaveProgress.classList.add('d-none');
+            }
             
             elements.gameOverActions.innerHTML = `
                 <button class="btn btn-success btn-lg me-2" onclick="RogueSweeper.advanceToNextLevel()">
@@ -752,6 +767,9 @@ const RogueSweeper = (function() {
             
             elements.btnNextLevel.classList.add('d-none');
             elements.btnAbandon.classList.add('d-none');
+            if (elements.btnSaveProgress) {
+                elements.btnSaveProgress.classList.add('d-none');
+            }
             
             elements.gameOverActions.innerHTML = `
                 <button class="btn btn-success btn-lg" onclick="RogueSweeper.initGame(true)">
@@ -788,6 +806,9 @@ const RogueSweeper = (function() {
             
             elements.btnNextLevel.classList.add('d-none');
             elements.btnAbandon.classList.remove('d-none');
+            if (elements.btnSaveProgress) {
+                elements.btnSaveProgress.classList.remove('d-none');
+            }
             elements.gameStatus.textContent = getMessage('playing', 'Playing');
             elements.gameStatus.className = 'badge bg-success';
         } else if (data?.error) {
@@ -813,6 +834,9 @@ const RogueSweeper = (function() {
             stopTimer();
             
             elements.btnAbandon.classList.add('d-none');
+            if (elements.btnSaveProgress) {
+                elements.btnSaveProgress.classList.add('d-none');
+            }
             showWelcome();
             
             // Reset stats
@@ -823,6 +847,82 @@ const RogueSweeper = (function() {
             elements.statClues.textContent = '1';
             elements.statTime.textContent = '00:00';
         }
+    }
+
+    /**
+     * Save progress for logged-in users
+     * Saves current level and score to the player's profile
+     */
+    async function saveProgress() {
+        if (!state.hasSession) {
+            return;
+        }
+        
+        // Disable button while saving
+        if (elements.btnSaveProgress) {
+            elements.btnSaveProgress.disabled = true;
+            elements.btnSaveProgress.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Saving...';
+        }
+        
+        const data = await apiRequest(getUrl('saveProgress'), 'POST');
+        
+        // Re-enable button
+        if (elements.btnSaveProgress) {
+            elements.btnSaveProgress.disabled = false;
+            elements.btnSaveProgress.innerHTML = '<i class="bi bi-save me-2"></i>' + getMessage('saveProgress', 'Save Progress');
+        }
+        
+        if (data && !data.error) {
+            // Show success message
+            const message = data.high_score_updated 
+                ? getMessage('progressSavedWithHighScore', 'Progress saved! New high score!')
+                : getMessage('progressSaved', 'Progress saved successfully!');
+            
+            showToast(message, 'success');
+        } else if (data?.error) {
+            showToast(getMessage('saveError', 'Could not save progress.'), 'danger');
+        }
+    }
+
+    /**
+     * Show a temporary toast notification
+     * @param {string} message - The message to display
+     * @param {string} type - Bootstrap color class (success, danger, warning, etc.)
+     */
+    function showToast(message, type = 'info') {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            toastContainer.style.zIndex = '9999';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create toast element
+        const toastId = 'toast-' + Date.now();
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+        
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
+        toast.show();
+        
+        // Remove from DOM after hidden
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
     }
 
     // =============================================================================

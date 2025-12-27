@@ -207,7 +207,7 @@ ROGUESWEEPER_CLUES_PER_LEVEL = 1
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'game.views.CsrfExemptSessionAuthentication',
+        'game.authentication.DjangoSessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
