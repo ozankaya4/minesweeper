@@ -515,11 +515,6 @@ const RogueSweeper = (function() {
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
         
-        // Don't allow clicks on revealed cells (except for chord)
-        if (!cell.classList.contains('hidden') && !cell.classList.contains('flagged') && !cell.classList.contains('flagged-immune')) {
-            return;
-        }
-        
         // Don't allow clicks if game is over
         if (state.gameData?.board?.game_over) {
             return;
@@ -527,8 +522,15 @@ const RogueSweeper = (function() {
         
         let action = 'reveal';
         
-        // If clue mode is active, use clue action
-        if (state.isClueMode) {
+        // Check if this is a revealed numbered cell (for chord action)
+        if (cell.classList.contains('revealed') && !cell.classList.contains('empty')) {
+            // Chord: reveal all unflagged neighbors if correct number of flags placed
+            action = 'chord';
+        } else if (!cell.classList.contains('hidden') && !cell.classList.contains('flagged') && !cell.classList.contains('flagged-immune')) {
+            // Don't allow clicks on other revealed cells (empty cells)
+            return;
+        } else if (state.isClueMode) {
+            // If clue mode is active, use clue action
             action = 'clue';
             toggleClueMode(); // Turn off clue mode after use
         }

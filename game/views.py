@@ -93,7 +93,7 @@ class SwitchLanguageView(View):
         translation.activate(language_code)
         
         # Store in session
-        request.session[translation.LANGUAGE_SESSION_KEY] = language_code
+        request.session['_language'] = language_code
         
         # Determine response type
         referer = request.META.get('HTTP_REFERER')

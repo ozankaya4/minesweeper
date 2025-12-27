@@ -1,0 +1,220 @@
+# RogueSweeper Turkish Translations
+# Copyright (C) 2025 RogueSweeper Team
+# This file is distributed under the same license as the RogueSweeper package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RogueSweeper 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-27 12:00+0000\n"
+"PO-Revision-Date: 2025-12-27 12:00+0000\n"
+"Last-Translator: RogueSweeper Team\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: game/templates/game/base.html
+msgid "Play"
+msgstr "Oyna"
+
+#: game/templates/game/base.html
+msgid "Leaderboard"
+msgstr "Liderlik Tablosu"
+
+#: game/templates/game/base.html
+msgid "Language selection"
+msgstr "Dil seçimi"
+
+#: game/templates/game/base.html
+msgid "My Stats"
+msgstr "İstatistiklerim"
+
+#: game/templates/game/base.html
+msgid "Logout"
+msgstr "Çıkış Yap"
+
+#: game/templates/game/base.html
+msgid "Login"
+msgstr "Giriş Yap"
+
+#: game/templates/game/base.html
+msgid "All rights reserved."
+msgstr "Tüm hakları saklıdır."
+
+#: game/templates/game/index.html
+msgid "Game Stats"
+msgstr "Oyun İstatistikleri"
+
+#: game/templates/game/index.html
+msgid "Level"
+msgstr "Seviye"
+
+#: game/templates/game/index.html
+msgid "Score"
+msgstr "Puan"
+
+#: game/templates/game/index.html
+msgid "Mines"
+msgstr "Mayınlar"
+
+#: game/templates/game/index.html
+msgid "Flags"
+msgstr "Bayraklar"
+
+#: game/templates/game/index.html
+msgid "Clues"
+msgstr "İpuçları"
+
+#: game/templates/game/index.html
+msgid "Time"
+msgstr "Süre"
+
+#: game/templates/game/index.html
+msgid "Controls"
+msgstr "Kontroller"
+
+#: game/templates/game/index.html
+msgid "New Game"
+msgstr "Yeni Oyun"
+
+#: game/templates/game/index.html
+msgid "Use Clue"
+msgstr "İpucu Kullan"
+
+#: game/templates/game/index.html
+msgid "Next Level"
+msgstr "Sonraki Seviye"
+
+#: game/templates/game/index.html
+msgid "Abandon Run"
+msgstr "Oyunu Bırak"
+
+#: game/templates/game/index.html
+msgid "How to Play"
+msgstr "Nasıl Oynanır"
+
+#: game/templates/game/index.html
+msgid "Left Click"
+msgstr "Sol Tık"
+
+#: game/templates/game/index.html
+msgid "Reveal cell"
+msgstr "Hücreyi aç"
+
+#: game/templates/game/index.html
+msgid "Right Click"
+msgstr "Sağ Tık"
+
+#: game/templates/game/index.html
+msgid "Place/Remove flag"
+msgstr "Bayrak koy/kaldır"
+
+#: game/templates/game/index.html
+msgid "Middle Click"
+msgstr "Orta Tık"
+
+#: game/templates/game/index.html
+msgid "Chord reveal"
+msgstr "Toplu açma"
+
+#: game/templates/game/index.html
+msgid "Clue"
+msgstr "İpucu"
+
+#: game/templates/game/index.html
+msgid "Safely test any cell"
+msgstr "Herhangi bir hücreyi güvenle test et"
+
+#: game/templates/game/index.html
+msgid "Game Board"
+msgstr "Oyun Tahtası"
+
+#: game/templates/game/index.html
+msgid "Ready"
+msgstr "Hazır"
+
+#: game/templates/game/index.html
+msgid "Loading..."
+msgstr "Yükleniyor..."
+
+#: game/templates/game/index.html
+msgid "Loading game..."
+msgstr "Oyun yükleniyor..."
+
+#: game/templates/game/index.html
+msgid "Player"
+msgstr "Oyuncu"
+
+#: game/templates/game/index.html
+msgid "My Statistics"
+msgstr "İstatistiklerim"
+
+#: JavaScript messages
+msgid "You Won! Click Next Level to continue."
+msgstr "Kazandınız! Devam etmek için Sonraki Seviye'ye tıklayın."
+
+msgid "Game Over! Click New Game to restart."
+msgstr "Oyun Bitti! Yeniden başlamak için Yeni Oyun'a tıklayın."
+
+msgid "An error occurred."
+msgstr "Bir hata oluştu."
+
+msgid "Clue Mode Active! Click a hidden cell."
+msgstr "İpucu Modu Aktif! Gizli bir hücreye tıklayın."
+
+msgid "No clues remaining!"
+msgstr "Kalan ipucu yok!"
+
+msgid "Session expired. Please refresh the page."
+msgstr "Oturum süresi doldu. Lütfen sayfayı yenileyin."
+
+msgid "Network error. Please check your connection."
+msgstr "Ağ hatası. Lütfen bağlantınızı kontrol edin."
+
+msgid "Are you sure you want to abandon this run? Your progress will be saved to the leaderboard."
+msgstr "Bu oyunu bırakmak istediğinizden emin misiniz? İlerlemeniz liderlik tablosuna kaydedilecek."
+
+msgid "Level Complete!"
+msgstr "Seviye Tamamlandı!"
+
+msgid "Game Over!"
+msgstr "Oyun Bitti!"
+
+msgid "You cleared Level"
+msgstr "Seviyeyi tamamladınız"
+
+msgid "You reached Level"
+msgstr "Ulaştığınız seviye"
+
+msgid "with"
+msgstr "ile"
+
+msgid "points"
+msgstr "puan"
+
+msgid "New Run"
+msgstr "Yeni Oyun"
+
+msgid "Try Again"
+msgstr "Tekrar Dene"
+
+msgid "Playing"
+msgstr "Oynanıyor"
+
+msgid "Victory!"
+msgstr "Zafer!"
+
+msgid "Clue Mode"
+msgstr "İpucu Modu"
+
+msgid "Welcome to RogueSweeper!"
+msgstr "RogueSweeper'a Hoş Geldiniz!"
+
+msgid "A roguelike Minesweeper with infinite levels."
+msgstr "Sonsuz seviyeli roguelike bir Mayın Tarlası."
+
+msgid "Click New Game to start your run!"
+msgstr "Yeni Oyun'a tıklayarak başlayın!"
