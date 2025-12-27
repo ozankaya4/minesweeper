@@ -71,12 +71,25 @@ const RogueSweeper = (function() {
     // =============================================================================
     
     /**
-     * Get CSRF token from meta tag
+     * Get CSRF token from meta tag or cookie
      * @returns {string} CSRF token
      */
     function getCsrfToken() {
+        // First try meta tag
         const meta = document.querySelector('meta[name="csrf-token"]');
-        return meta ? meta.getAttribute('content') : '';
+        if (meta && meta.getAttribute('content')) {
+            return meta.getAttribute('content');
+        }
+        
+        // Fallback to cookie
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                return value;
+            }
+        }
+        return '';
     }
 
     /**
@@ -104,9 +117,9 @@ const RogueSweeper = (function() {
             const response = await fetch(url, options);
             
             if (response.status === 403) {
-                // CSRF or authentication error
-                showError(getMessage('sessionExpired', 'Session expired. Please refresh the page.'));
-                return null;
+                // CSRF or authentication error - handle silently
+                console.warn('403 Error - likely CSRF or session issue');
+                return { error: 'forbidden', status: 403 };
             }
             
             if (response.status === 404) {
@@ -654,7 +667,11 @@ const RogueSweeper = (function() {
         
         elements.statLevel.textContent = data.level_number || 1;
         elements.statScore.textContent = data.score || 0;
-        elements.statClues.textContent = data.clues_remaining ?? 1;
+        
+        // Display clues as "remaining/total"
+        const cluesRemaining = data.clues_remaining ?? 1;
+        const cluesTotal = data.clues_total ?? 1;
+        elements.statClues.textContent = `${cluesRemaining}/${cluesTotal}`;
         
         // Board-specific stats
         if (data.board) {
@@ -664,7 +681,7 @@ const RogueSweeper = (function() {
         }
         
         // Update clue button state
-        if (data.clues_remaining > 0 && !data.board?.game_over) {
+        if (cluesRemaining > 0 && !data.board?.game_over) {
             elements.btnClue.disabled = false;
         } else {
             elements.btnClue.disabled = true;
@@ -673,7 +690,7 @@ const RogueSweeper = (function() {
         }
         
         // Warning state for low clues
-        if (data.clues_remaining === 0) {
+        if (cluesRemaining === 0) {
             elements.statClues.classList.add('bg-danger');
             elements.statClues.classList.remove('bg-light', 'text-dark');
         } else {

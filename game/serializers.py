@@ -15,7 +15,7 @@ from typing import Any
 from rest_framework import serializers
 
 from .engine import GameEngine
-from .models import GameSession, Player, Score
+from .models import GameSession, Player, Score, get_clues_for_level
 
 
 class GameActionSerializer(serializers.Serializer):
@@ -87,6 +87,9 @@ class GameSessionSerializer(serializers.ModelSerializer):
     board = serializers.SerializerMethodField(
         help_text="Sanitized board state with mines hidden."
     )
+    clues_total = serializers.SerializerMethodField(
+        help_text="Total clues available for this level."
+    )
     
     class Meta:
         model = GameSession
@@ -94,6 +97,7 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'id',
             'level_number',
             'clues_remaining',
+            'clues_total',
             'score',
             'status',
             'time_elapsed',
@@ -104,6 +108,10 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'updated_at',
         ]
         read_only_fields = fields
+    
+    def get_clues_total(self, obj: GameSession) -> int:
+        """Get total clues available for the current level."""
+        return get_clues_for_level(obj.level_number)
     
     def get_board(self, obj: GameSession) -> dict[str, Any]:
         """

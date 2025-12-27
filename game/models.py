@@ -21,6 +21,35 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
+def get_clues_for_level(level: int) -> int:
+    """
+    Get the number of clues available for a given level.
+    
+    Clue distribution:
+        - Levels 1-5: 1 clue
+        - Levels 6-10: 2 clues
+        - Levels 11-15: 3 clues
+        - Levels 16-20: 4 clues
+        - Levels 21+: 5 clues
+    
+    Args:
+        level: The current level number (1-indexed)
+    
+    Returns:
+        Number of clues available for that level
+    """
+    if level <= 5:
+        return 1
+    elif level <= 10:
+        return 2
+    elif level <= 15:
+        return 3
+    elif level <= 20:
+        return 4
+    else:
+        return 5
+
+
 class Player(AbstractUser):
     """
     Custom User model for RogueSweeper players.
@@ -335,7 +364,7 @@ class GameSession(models.Model):
         a new empty board state for the next level.
         """
         self.level_number += 1
-        self.clues_remaining = getattr(settings, 'ROGUESWEEPER_CLUES_PER_LEVEL', 1)
+        self.clues_remaining = get_clues_for_level(self.level_number)
         self.board_state = self._get_default_board_state()
         self.cells_revealed = 0
         self.flags_placed = 0
