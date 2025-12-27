@@ -1,0 +1,168 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="description" content="RogueSweeper - A roguelike Minesweeper game with infinite levels">
+    
+    <title>{% block title %}RogueSweeper{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{% static 'game/css/style.css' %}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'game:index' %}">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>RogueSweeper
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'game:index' %}">
+                            <i class="bi bi-play-circle me-1"></i>{% trans "Play" %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="leaderboard-link">
+                            <i class="bi bi-trophy me-1"></i>{% trans "Leaderboard" %}
+                        </a>
+                    </li>
+                </ul>
+                <!-- Language Switcher -->
+                <form action="{% url 'game:switch-language' %}" method="post" class="d-flex align-items-center me-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <div class="btn-group" role="group" aria-label="{% trans 'Language selection' %}">
+                        <button name="language" value="en" type="submit" 
+                                class="btn btn-sm {% if LANGUAGE_CODE == 'en' %}btn-light{% else %}btn-outline-light{% endif %}" 
+                                title="English">
+                            EN
+                        </button>
+                        <button name="language" value="tr" type="submit" 
+                                class="btn btn-sm {% if LANGUAGE_CODE == 'tr' %}btn-light{% else %}btn-outline-light{% endif %}" 
+                                title="Türkçe">
+                            TR
+                        </button>
+                    </div>
+                </form>
+                
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" id="stats-link">
+                                    <i class="bi bi-bar-chart me-2"></i>{% trans "My Stats" %}
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:login' %}">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>{% trans "Login" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-muted border-top border-secondary">
+        <div class="container text-center">
+            <small>&copy; 2025 RogueSweeper. {% trans "All rights reserved." %}</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- API URLs for JavaScript -->
+    <script>
+        window.API_URLS = {
+            start: '/api/start/',
+            session: '/api/session/',
+            action: '/api/action/',
+            nextLevel: '/api/next-level/',
+            updateTime: '/api/update-time/',
+            leaderboard: '/api/leaderboard/',
+            stats: '/api/stats/',
+            abandon: '/api/abandon/',
+            switchLanguage: '/switch-language/'
+        };
+        
+        /**
+         * Switch the application language.
+         * @param {string} langCode - The language code ('en' or 'tr')
+         */
+        function switchLanguage(langCode) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            fetch(window.API_URLS.switchLanguage, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ language: langCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload page to apply new language
+                    window.location.reload();
+                } else {
+                    console.error('Language switch failed:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Language switch error:', error);
+            });
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

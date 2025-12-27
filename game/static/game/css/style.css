@@ -1,0 +1,448 @@
+/**
+ * RogueSweeper Game Styles
+ * 
+ * Custom CSS for the Minesweeper game interface.
+ * Uses CSS Grid for the game board layout.
+ */
+
+/* =============================================================================
+   CSS Variables
+   ============================================================================= */
+:root {
+    /* Cell sizes */
+    --cell-size: 32px;
+    --cell-size-sm: 28px;
+    --cell-size-lg: 36px;
+    
+    /* Colors */
+    --color-hidden: #6c757d;
+    --color-hidden-hover: #5a6268;
+    --color-revealed: #e9ecef;
+    --color-revealed-empty: #f8f9fa;
+    --color-flagged: #ffc107;
+    --color-flagged-immune: #20c997;
+    --color-mine: #dc3545;
+    --color-mine-hit: #ff0000;
+    
+    /* Number colors (Minesweeper standard) */
+    --color-1: #0000ff;  /* Blue */
+    --color-2: #008000;  /* Green */
+    --color-3: #ff0000;  /* Red */
+    --color-4: #000080;  /* Navy */
+    --color-5: #800000;  /* Maroon */
+    --color-6: #008080;  /* Teal */
+    --color-7: #000000;  /* Black */
+    --color-8: #808080;  /* Gray */
+    
+    /* Grid settings */
+    --grid-cols: 8;
+    --grid-gap: 2px;
+}
+
+/* =============================================================================
+   Game Grid
+   ============================================================================= */
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), var(--cell-size));
+    gap: var(--grid-gap);
+    background-color: #343a40;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Responsive cell sizes */
+@media (max-width: 576px) {
+    #game-grid {
+        grid-template-columns: repeat(var(--grid-cols), var(--cell-size-sm));
+    }
+    
+    .cell {
+        width: var(--cell-size-sm) !important;
+        height: var(--cell-size-sm) !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    #game-grid {
+        grid-template-columns: repeat(var(--grid-cols), var(--cell-size-lg));
+    }
+    
+    .cell {
+        width: var(--cell-size-lg) !important;
+        height: var(--cell-size-lg) !important;
+        font-size: 18px !important;
+    }
+}
+
+/* =============================================================================
+   Cell Base Styles
+   ============================================================================= */
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+}
+
+/* =============================================================================
+   Cell States
+   ============================================================================= */
+
+/* Hidden cell (default) */
+.cell.hidden {
+    background: linear-gradient(145deg, #7d8894, #5a6268);
+    border-color: #8a939c #4a5258 #4a5258 #8a939c;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.cell.hidden:hover {
+    background: linear-gradient(145deg, #8a959f, #6c757d);
+    transform: scale(1.05);
+}
+
+.cell.hidden:active {
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
+/* Revealed cell */
+.cell.revealed {
+    background-color: var(--color-revealed);
+    border-color: #dee2e6;
+    cursor: default;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cell.revealed:hover {
+    transform: none;
+}
+
+/* Empty revealed cell (0 adjacent mines) */
+.cell.revealed.empty {
+    background-color: var(--color-revealed-empty);
+}
+
+/* =============================================================================
+   Flagged Cells
+   ============================================================================= */
+
+/* Regular flag (player placed) */
+.cell.flagged {
+    background: linear-gradient(145deg, #ffcd39, #e6ac00);
+    border-color: #ffe066 #cc9a00 #cc9a00 #ffe066;
+    color: #dc3545;
+}
+
+.cell.flagged::before {
+    content: "🚩";
+    font-size: 16px;
+}
+
+.cell.flagged:hover {
+    background: linear-gradient(145deg, #ffdb6d, #ffc107);
+}
+
+/* Immune flag (placed by Clue power-up) */
+.cell.flagged-immune {
+    background: linear-gradient(145deg, #3dd5b0, #1a9d7c);
+    border-color: #5fe3c4 #158f6f #158f6f #5fe3c4;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(32, 201, 151, 0.5);
+    animation: pulse-immune 2s infinite;
+}
+
+.cell.flagged-immune::before {
+    content: "🛡️";
+    font-size: 16px;
+}
+
+@keyframes pulse-immune {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(32, 201, 151, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 16px rgba(32, 201, 151, 0.8);
+    }
+}
+
+/* =============================================================================
+   Mine Cells
+   ============================================================================= */
+
+/* Mine (revealed on game over) */
+.cell.mine {
+    background: linear-gradient(145deg, #ff6b6b, #dc3545);
+    border-color: #ff8787 #c82333 #c82333 #ff8787;
+    cursor: default;
+}
+
+.cell.mine::before {
+    content: "💣";
+    font-size: 16px;
+}
+
+/* Mine that was hit (caused game over) */
+.cell.mine-hit {
+    background: linear-gradient(145deg, #ff0000, #cc0000);
+    border-color: #ff3333 #990000 #990000 #ff3333;
+    cursor: default;
+    animation: explode 0.3s ease-out;
+}
+
+.cell.mine-hit::before {
+    content: "💥";
+    font-size: 18px;
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* =============================================================================
+   Number Colors (Adjacent Mine Counts)
+   ============================================================================= */
+
+.cell[data-val="1"] {
+    color: var(--color-1);
+}
+
+.cell[data-val="2"] {
+    color: var(--color-2);
+}
+
+.cell[data-val="3"] {
+    color: var(--color-3);
+}
+
+.cell[data-val="4"] {
+    color: var(--color-4);
+}
+
+.cell[data-val="5"] {
+    color: var(--color-5);
+}
+
+.cell[data-val="6"] {
+    color: var(--color-6);
+}
+
+.cell[data-val="7"] {
+    color: var(--color-7);
+}
+
+.cell[data-val="8"] {
+    color: var(--color-8);
+}
+
+/* =============================================================================
+   Clue Mode Indicator
+   ============================================================================= */
+
+/* When clue mode is active, show visual feedback */
+body.clue-mode #game-grid .cell.hidden {
+    cursor: crosshair;
+}
+
+body.clue-mode #game-grid .cell.hidden:hover {
+    background: linear-gradient(145deg, #5fe3c4, #20c997);
+    border-color: #7eebd3 #1a9d7c #1a9d7c #7eebd3;
+    box-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+}
+
+body.clue-mode #btn-clue {
+    background-color: #20c997 !important;
+    border-color: #20c997 !important;
+    color: #fff !important;
+    animation: glow-clue 1.5s infinite;
+}
+
+@keyframes glow-clue {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(32, 201, 151, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(32, 201, 151, 0.8);
+    }
+}
+
+/* =============================================================================
+   Game Over Overlay
+   ============================================================================= */
+
+#game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+.game-over-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+#game-over-title.win {
+    color: #20c997;
+    text-shadow: 0 0 20px rgba(32, 201, 151, 0.5);
+}
+
+#game-over-title.lose {
+    color: #dc3545;
+    text-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
+}
+
+/* =============================================================================
+   Stats Panel Enhancements
+   ============================================================================= */
+
+.card {
+    border: none;
+}
+
+.card-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Pulse animation for low clues warning */
+#stat-clues.warning {
+    animation: pulse-warning 1s infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% {
+        background-color: #f8f9fa;
+    }
+    50% {
+        background-color: #ffc107;
+    }
+}
+
+/* =============================================================================
+   Button Enhancements
+   ============================================================================= */
+
+#btn-new-game:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+#btn-clue:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+#btn-clue:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#btn-next-level:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+/* =============================================================================
+   Loading State
+   ============================================================================= */
+
+#game-loading {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =============================================================================
+   Card Body for Game Grid
+   ============================================================================= */
+
+.card-body {
+    position: relative;
+    overflow: auto;
+}
+
+/* Scrollable grid for very large boards */
+@media (max-width: 992px) {
+    .card-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* =============================================================================
+   Leaderboard Table
+   ============================================================================= */
+
+#leaderboard-body tr:nth-child(1) td:first-child {
+    color: gold;
+}
+
+#leaderboard-body tr:nth-child(2) td:first-child {
+    color: silver;
+}
+
+#leaderboard-body tr:nth-child(3) td:first-child {
+    color: #cd7f32; /* Bronze */
+}
+
+/* =============================================================================
+   Utility Classes
+   ============================================================================= */
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Prevent text selection on game elements */
+#game-grid,
+.cell,
+#btn-clue,
+#btn-new-game {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+    .cell.hidden:hover {
+        transform: none;
+        background: linear-gradient(145deg, #7d8894, #5a6268);
+    }
+    
+    .cell.hidden:active {
+        background: linear-gradient(145deg, #8a959f, #6c757d);
+        transform: scale(0.95);
+    }
+}

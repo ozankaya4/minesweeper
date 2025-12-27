@@ -1,0 +1,248 @@
+{% extends 'game/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Play" %} - RogueSweeper{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Inline critical styles for game responsiveness */
+    .game-container {
+        min-height: calc(100vh - 200px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid game-container">
+    <div class="row justify-content-center">
+        <!-- Stats Panel (Left Side on Desktop, Top on Mobile) -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="card bg-secondary text-white shadow">
+                <div class="card-header bg-primary">
+                    <h5 class="mb-0">
+                        <i class="bi bi-speedometer2 me-2"></i>{% trans "Game Stats" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Level -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark">
+                        <span><i class="bi bi-layers me-2"></i>{% trans "Level" %}</span>
+                        <span id="stat-level" class="badge bg-info fs-5">1</span>
+                    </div>
+                    
+                    <!-- Score -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark">
+                        <span><i class="bi bi-star me-2"></i>{% trans "Score" %}</span>
+                        <span id="stat-score" class="badge bg-warning text-dark fs-5">0</span>
+                    </div>
+                    
+                    <!-- Mines Remaining -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark">
+                        <span><i class="bi bi-radioactive me-2"></i>{% trans "Mines" %}</span>
+                        <span id="stat-mines" class="badge bg-danger fs-5">10</span>
+                    </div>
+                    
+                    <!-- Flags Placed -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark">
+                        <span><i class="bi bi-flag-fill me-2"></i>{% trans "Flags" %}</span>
+                        <span id="stat-flags" class="badge bg-success fs-5">0</span>
+                    </div>
+                    
+                    <!-- Clues Remaining -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-dark">
+                        <span><i class="bi bi-lightbulb me-2"></i>{% trans "Clues" %}</span>
+                        <span id="stat-clues" class="badge bg-light text-dark fs-5">1</span>
+                    </div>
+                    
+                    <!-- Timer -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-stopwatch me-2"></i>{% trans "Time" %}</span>
+                        <span id="stat-time" class="badge bg-dark fs-5">00:00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controls -->
+            <div class="card bg-secondary text-white shadow mt-3">
+                <div class="card-header bg-primary">
+                    <h5 class="mb-0">
+                        <i class="bi bi-controller me-2"></i>{% trans "Controls" %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <!-- New Game Button -->
+                        <button id="btn-new-game" class="btn btn-success btn-lg">
+                            <i class="bi bi-play-fill me-2"></i>{% trans "New Game" %}
+                        </button>
+                        
+                        <!-- Use Clue Button (Toggle) -->
+                        <button id="btn-clue" class="btn btn-outline-warning btn-lg" disabled>
+                            <i class="bi bi-lightbulb me-2"></i>{% trans "Use Clue" %}
+                        </button>
+                        
+                        <!-- Next Level Button (Hidden by default) -->
+                        <button id="btn-next-level" class="btn btn-info btn-lg d-none">
+                            <i class="bi bi-arrow-right-circle me-2"></i>{% trans "Next Level" %}
+                        </button>
+                        
+                        <!-- Abandon Game Button -->
+                        <button id="btn-abandon" class="btn btn-outline-danger btn-sm mt-2 d-none">
+                            <i class="bi bi-x-circle me-2"></i>{% trans "Abandon Run" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="card bg-dark text-white shadow mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>{% trans "How to Play" %}
+                    </h6>
+                </div>
+                <div class="card-body small">
+                    <ul class="mb-0 ps-3">
+                        <li><strong>{% trans "Left Click" %}</strong>: {% trans "Reveal cell" %}</li>
+                        <li><strong>{% trans "Right Click" %}</strong>: {% trans "Place/Remove flag" %}</li>
+                        <li><strong>{% trans "Middle Click" %}</strong>: {% trans "Chord reveal" %}</li>
+                        <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Board (Center) -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card bg-secondary shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-grid-3x3 me-2"></i>{% trans "Game Board" %}
+                    </h5>
+                    <span id="game-status" class="badge bg-success">{% trans "Ready" %}</span>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center p-4">
+                    <!-- Loading Spinner -->
+                    <div id="game-loading" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">{% trans "Loading..." %}</span>
+                        </div>
+                        <p class="mt-3 text-white">{% trans "Loading game..." %}</p>
+                    </div>
+                    
+                    <!-- Game Grid -->
+                    <div id="game-grid" class="d-none"></div>
+                    
+                    <!-- Game Over Overlay -->
+                    <div id="game-over-overlay" class="d-none">
+                        <div class="game-over-content text-center">
+                            <h2 id="game-over-title" class="display-4 mb-3"></h2>
+                            <p id="game-over-message" class="lead mb-4"></p>
+                            <div id="game-over-actions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaderboard Modal -->
+<div class="modal fade" id="leaderboardModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">
+                    <i class="bi bi-trophy me-2"></i>{% trans "Leaderboard" %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{% trans "Player" %}</th>
+                            <th>{% trans "Score" %}</th>
+                            <th>{% trans "Level" %}</th>
+                            <th>{% trans "Time" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Modal -->
+<div class="modal fade" id="statsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">
+                    <i class="bi bi-bar-chart me-2"></i>{% trans "My Statistics" %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="stats-body">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Game Configuration with Translated Strings -->
+<script>
+    window.gameConfig = {
+        urls: {
+            start: "{% url 'game:start-game' %}",
+            session: "{% url 'game:game-session' %}",
+            action: "{% url 'game:game-action' %}",
+            nextLevel: "{% url 'game:next-level' %}",
+            updateTime: "{% url 'game:update-time' %}",
+            leaderboard: "{% url 'game:leaderboard' %}",
+            stats: "{% url 'game:player-stats' %}",
+            abandon: "{% url 'game:abandon-game' %}"
+        },
+        messages: {
+            won: "{% trans 'You Won! Click Next Level to continue.' %}",
+            lost: "{% trans 'Game Over! Click New Game to restart.' %}",
+            error: "{% trans 'An error occurred.' %}",
+            clueActive: "{% trans 'Clue Mode Active! Click a hidden cell.' %}",
+            noClues: "{% trans 'No clues remaining!' %}",
+            sessionExpired: "{% trans 'Session expired. Please refresh the page.' %}",
+            networkError: "{% trans 'Network error. Please check your connection.' %}",
+            confirmAbandon: "{% trans 'Are you sure you want to abandon this run? Your progress will be saved to the leaderboard.' %}",
+            levelComplete: "{% trans 'Level Complete!' %}",
+            gameOver: "{% trans 'Game Over!' %}",
+            clearedLevel: "{% trans 'You cleared Level' %}",
+            reachedLevel: "{% trans 'You reached Level' %}",
+            withScore: "{% trans 'with' %}",
+            points: "{% trans 'points' %}",
+            nextLevel: "{% trans 'Next Level' %}",
+            newRun: "{% trans 'New Run' %}",
+            tryAgain: "{% trans 'Try Again' %}",
+            playing: "{% trans 'Playing' %}",
+            victory: "{% trans 'Victory!' %}",
+            ready: "{% trans 'Ready' %}",
+            clueMode: "{% trans 'Clue Mode' %}",
+            welcome: "{% trans 'Welcome to RogueSweeper!' %}",
+            welcomeDesc: "{% trans 'A roguelike Minesweeper with infinite levels.' %}",
+            welcomeAction: "{% trans 'Click \"New Game\" to start your run!' %}"
+        }
+    };
+</script>
+<script src="{% static 'game/js/game.js' %}"></script>
+<script>
+    // Initialize game when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        RogueSweeper.init();
+    });
+</script>
+{% endblock %}

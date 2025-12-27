@@ -1,0 +1,20 @@
+# RogueSweeper Requirements
+# ========================
+
+# Core Framework
+Django>=5.0
+
+# API Framework
+djangorestframework>=3.14
+
+# Environment Variable Management
+python-dotenv>=1.0
+
+# Production WSGI Server
+gunicorn>=21.0
+
+# Database (PostgreSQL for production)
+psycopg2-binary>=2.9
+
+# Development Dependencies (optional)
+# pip install -r requirements-dev.txt for these

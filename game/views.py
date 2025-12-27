@@ -10,16 +10,115 @@ Author: RogueSweeper Team
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from django.conf import settings
-from django.shortcuts import render
-from django.utils import timezone
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone, translation
+from django.views import View
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+# =============================================================================
+# Template Views
+# =============================================================================
+
+class HomeView(View):
+    """
+    Main game page view.
+    
+    Renders the index.html template with the game interface.
+    Handles guest player creation for unauthenticated users.
+    """
+    
+    def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Render the game home page.
+        
+        If user is not authenticated, ensures a guest session exists
+        by storing guest identifier in session.
+        """
+        # Ensure session exists for guest players
+        if not request.session.session_key:
+            request.session.create()
+        
+        return render(request, 'game/index.html')
+
+
+class SwitchLanguageView(View):
+    """
+    View to handle language switching.
+    
+    Accepts POST requests with a language code, validates it against
+    available languages, and sets the django_language cookie.
+    """
+    
+    def post(self, request: HttpRequest) -> HttpResponse:
+        """
+        Switch the user's language preference.
+        
+        Args:
+            request: HTTP request with 'language' in POST data or JSON body.
+        
+        Returns:
+            JSON response or redirect to referrer.
+        """
+        # Get language code from POST data or JSON body
+        language_code = request.POST.get('language')
+        
+        if not language_code:
+            # Try to get from JSON body
+            try:
+                body = json.loads(request.body)
+                language_code = body.get('language')
+            except (json.JSONDecodeError, ValueError):
+                pass
+        
+        # Validate language code
+        valid_languages = [code for code, name in settings.LANGUAGES]
+        
+        if not language_code or language_code not in valid_languages:
+            return JsonResponse(
+                {'error': 'Invalid language code', 'valid_codes': valid_languages},
+                status=400
+            )
+        
+        # Activate the language for this request
+        translation.activate(language_code)
+        
+        # Store in session
+        request.session[translation.LANGUAGE_SESSION_KEY] = language_code
+        
+        # Determine response type
+        referer = request.META.get('HTTP_REFERER')
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' or \
+                  request.content_type == 'application/json'
+        
+        if is_ajax:
+            response = JsonResponse({'success': True, 'language': language_code})
+        else:
+            response = redirect(referer) if referer else redirect('game:index')
+        
+        # Set the language cookie
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language_code,
+            max_age=settings.LANGUAGE_COOKIE_AGE if hasattr(settings, 'LANGUAGE_COOKIE_AGE') else 31536000,
+            path=settings.LANGUAGE_COOKIE_PATH if hasattr(settings, 'LANGUAGE_COOKIE_PATH') else '/',
+            domain=settings.LANGUAGE_COOKIE_DOMAIN if hasattr(settings, 'LANGUAGE_COOKIE_DOMAIN') else None,
+            secure=settings.LANGUAGE_COOKIE_SECURE if hasattr(settings, 'LANGUAGE_COOKIE_SECURE') else False,
+            httponly=settings.LANGUAGE_COOKIE_HTTPONLY if hasattr(settings, 'LANGUAGE_COOKIE_HTTPONLY') else False,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE if hasattr(settings, 'LANGUAGE_COOKIE_SAMESITE') else 'Lax',
+        )
+        
+        return response
+
 
 from .engine import GameEngine
 from .models import GameSession, Player, Score
