@@ -349,12 +349,20 @@ const RogueSweeper = (function() {
      * Handles checkbox change for reveal/flag mode switching
      */
     function initMobileFlagMode() {
+        console.log('initMobileFlagMode called, switch element:', elements.flagModeSwitch);
         if (elements.flagModeSwitch) {
             elements.flagModeSwitch.addEventListener('change', function() {
                 touchState.isFlagMode = this.checked;
                 updateFlagModeDisplay();
-                console.log('Flag mode changed to:', touchState.isFlagMode);
+                console.log('Switch changed! Flag mode is now:', touchState.isFlagMode);
+                // Visual feedback - flash the game board border
+                if (elements.grid) {
+                    elements.grid.style.outline = touchState.isFlagMode ? '3px solid orange' : 'none';
+                }
             });
+            console.log('Switch event listener attached successfully');
+        } else {
+            console.log('Flag mode switch element not found!');
         }
     }
 
@@ -610,17 +618,24 @@ const RogueSweeper = (function() {
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
         
+        // DEBUG: Show flag mode status
+        console.log('Click detected. Flag mode:', touchState.isFlagMode);
+        
         // Don't allow clicks if game is over
         if (state.gameData?.board?.game_over) {
             return;
         }
         
         // If in flag mode (mobile toggle), flag instead of reveal
-        if (touchState.isFlagMode) {
+        if (touchState.isFlagMode === true) {
+            console.log('FLAG MODE ACTIVE - attempting to flag cell', row, col);
             if (cell.classList.contains('hidden') || 
                 cell.classList.contains('flagged') || 
                 cell.classList.contains('flagged-immune')) {
+                console.log('Calling performAction with flag');
                 await performAction(row, col, 'flag');
+            } else {
+                console.log('Cell not flaggable, classes:', cell.className);
             }
             return;
         }
