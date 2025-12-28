@@ -46,7 +46,8 @@ const RogueSweeper = (function() {
         startY: 0,
         cell: null,
         isLongPress: false,
-        moved: false
+        moved: false,
+        skipNextClick: false  // Flag to prevent click after long press
     };
 
     // =============================================================================
@@ -556,6 +557,13 @@ const RogueSweeper = (function() {
      * @param {MouseEvent} e - Click event
      */
     async function handleLeftClick(e) {
+        // Skip this click if it's the result of a long press
+        if (touchState.skipNextClick) {
+            touchState.skipNextClick = false;
+            e.preventDefault();
+            return;
+        }
+        
         const cell = e.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
@@ -661,6 +669,7 @@ const RogueSweeper = (function() {
             // Only flag if user hasn't moved
             if (!touchState.moved) {
                 touchState.isLongPress = true;
+                touchState.skipNextClick = true;  // Prevent the click event
                 
                 // Vibrate for haptic feedback (if supported)
                 if (navigator.vibrate) {
