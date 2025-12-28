@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RogueSweeper 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-27 12:00+0000\n"
+"POT-Creation-Date: 2025-12-27 16:44+0000\n"
 "PO-Revision-Date: 2025-12-27 12:00+0000\n"
 "Last-Translator: RogueSweeper Team\n"
 "Language-Team: Turkish\n"
@@ -16,435 +16,766 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: game/templates/game/base.html
-msgid "Play"
-msgstr "Oyna"
-
-#: game/templates/game/base.html
-msgid "Leaderboard"
-msgstr "Liderlik Tablosu"
-
-#: game/templates/game/base.html
-msgid "Language selection"
-msgstr "Dil seçimi"
-
-#: game/templates/game/base.html
-msgid "My Stats"
-msgstr "İstatistiklerim"
-
-#: game/templates/game/base.html
-msgid "Logout"
-msgstr "Çıkış Yap"
-
-#: game/templates/game/base.html
-msgid "Login"
-msgstr "Giriş Yap"
-
-#: game/templates/game/base.html
-msgid "All rights reserved."
-msgstr "Tüm hakları saklıdır."
-
-#: game/templates/game/index.html
+#: game/admin.py:25 game/admin.py:34 game/templates/game/index.html:24
 msgid "Game Stats"
 msgstr "Oyun İstatistikleri"
 
-#: game/templates/game/index.html
-msgid "Level"
-msgstr "Seviye"
+#: game/admin.py:57
+#, fuzzy
+#| msgid "Game Stats"
+msgid "Game State"
+msgstr "Oyun İstatistikleri"
 
-#: game/templates/game/index.html
-msgid "Score"
-msgstr "Puan"
-
-#: game/templates/game/index.html
-msgid "Mines"
-msgstr "Mayınlar"
-
-#: game/templates/game/index.html
-msgid "Flags"
-msgstr "Bayraklar"
-
-#: game/templates/game/index.html
-msgid "Clues"
-msgstr "İpuçları"
-
-#: game/templates/game/index.html
-msgid "Time"
-msgstr "Süre"
-
-#: game/templates/game/index.html
-msgid "Controls"
-msgstr "Kontroller"
-
-#: game/templates/game/index.html
-msgid "New Game"
-msgstr "Yeni Oyun"
-
-#: game/templates/game/index.html
-msgid "Use Clue"
-msgstr "İpucu Kullan"
-
-#: game/templates/game/index.html
-msgid "Next Level"
-msgstr "Sonraki Seviye"
-
-#: game/templates/game/index.html
-msgid "Abandon Run"
-msgstr "Oyunu Bırak"
-
-#: game/templates/game/index.html
-msgid "How to Play"
-msgstr "Nasıl Oynanır"
-
-#: game/templates/game/index.html
-msgid "Left Click"
-msgstr "Sol Tık"
-
-#: game/templates/game/index.html
-msgid "Reveal cell"
-msgstr "Hücreyi aç"
-
-#: game/templates/game/index.html
-msgid "Right Click"
-msgstr "Sağ Tık"
-
-#: game/templates/game/index.html
-msgid "Place/Remove flag"
-msgstr "Bayrak koy/kaldır"
-
-#: game/templates/game/index.html
-msgid "Middle Click"
-msgstr "Orta Tık"
-
-#: game/templates/game/index.html
-msgid "Chord reveal"
-msgstr "Toplu açma"
-
-#: game/templates/game/index.html
-msgid "Clue"
-msgstr "İpucu"
-
-#: game/templates/game/index.html
-msgid "Safely test any cell"
-msgstr "Herhangi bir hücreyi güvenle test et"
-
-#: game/templates/game/index.html
-msgid "Game Board"
+#: game/admin.py:63
+#, fuzzy
+#| msgid "Game Board"
+msgid "Board"
 msgstr "Oyun Tahtası"
 
-#: game/templates/game/index.html
-msgid "Ready"
-msgstr "Hazır"
+#: game/admin.py:67 game/admin.py:97
+msgid "Timestamps"
+msgstr ""
 
-#: game/templates/game/index.html
-msgid "Loading..."
-msgstr "Yükleniyor..."
+#: game/admin.py:91
+msgid "Score Details"
+msgstr ""
 
-#: game/templates/game/index.html
-msgid "Loading game..."
-msgstr "Oyun yükleniyor..."
+# Auth success messages
+#: game/auth_views.py:52
+msgid "Account created successfully! Please log in."
+msgstr "Hesap başarıyla oluşturuldu! Lütfen giriş yapın."
 
-#: game/templates/game/index.html
+#: game/auth_views.py:93
+msgid "Welcome back, {}!"
+msgstr "Tekrar hoş geldin, {}!"
+
+#: game/auth_views.py:108 game/auth_views.py:114
+msgid "You have been logged out."
+msgstr "Çıkış yaptınız."
+
+#: game/auth_views.py:149
+msgid "Reset Your RogueSweeper Password"
+msgstr "RogueSweeper Şifrenizi Sıfırlayın"
+
+#: game/auth_views.py:177
+msgid ""
+"If an account with that email exists, we've sent password reset instructions."
+msgstr "Bu e-posta ile bir hesap varsa, şifre sıfırlama talimatları gönderdik."
+
+#: game/auth_views.py:205 game/auth_views.py:222
+msgid "This password reset link is invalid or has expired."
+msgstr "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+
+#: game/auth_views.py:232
+msgid "Your password has been reset successfully! Please log in."
+msgstr "Şifreniz başarıyla sıfırlandı! Lütfen giriş yapın."
+
+#: game/forms.py:34 game/forms.py:240
+msgid "Email"
+msgstr "E-posta"
+
+#: game/forms.py:37
+msgid "Enter your email"
+msgstr "E-postanızı girin"
+
+#: game/forms.py:40
+msgid "We'll use this for password recovery."
+msgstr "Şifre kurtarma için kullanılacaktır."
+
+#: game/forms.py:44
+msgid "Username"
+msgstr "Kullanıcı Adı"
+
+#: game/forms.py:48
+msgid "Choose a username"
+msgstr "Bir kullanıcı adı seçin"
+
+#: game/forms.py:50
+msgid "3-30 characters. Letters, digits and @/./+/-/_ only."
+msgstr "3-30 karakter. Sadece harfler, rakamlar ve @/./+/-/_ karakterleri."
+
+#: game/forms.py:54 game/forms.py:170
+msgid "Password"
+msgstr "Şifre"
+
+#: game/forms.py:57
+msgid "Create a password"
+msgstr "Bir şifre oluşturun"
+
+#: game/forms.py:62
+msgid "Confirm Password"
+msgstr "Şifreyi Onayla"
+
+#: game/forms.py:65
+msgid "Confirm your password"
+msgstr "Şifrenizi onaylayın"
+
+# Form validation errors
+#: game/forms.py:77
+msgid "An account with this email already exists."
+msgstr "Bu e-posta ile bir hesap zaten mevcut."
+
+#: game/forms.py:85
+msgid "Username must be at least 3 characters long."
+msgstr "Kullanıcı adı en az 3 karakter olmalıdır."
+
+#: game/forms.py:88
+msgid "This username is already taken."
+msgstr "Bu kullanıcı adı zaten alınmış."
+
+#: game/forms.py:98 game/forms.py:286
+msgid "Password must be at least 8 characters long."
+msgstr "Şifre en az 8 karakter uzunluğunda olmalıdır."
+
+#: game/forms.py:102 game/forms.py:290
+msgid "Password must contain at least one uppercase letter."
+msgstr "Şifre en az bir büyük harf içermelidir."
+
+#: game/forms.py:106 game/forms.py:294
+msgid "Password must contain at least one lowercase letter."
+msgstr "Şifre en az bir küçük harf içermelidir."
+
+#: game/forms.py:110 game/forms.py:298
+msgid "Password must contain at least one digit."
+msgstr "Şifre en az bir rakam içermelidir."
+
+#: game/forms.py:116 game/forms.py:304
+msgid ""
+"Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,."
+"<>?)."
+msgstr ""
+"Şifre en az bir özel karakter içermelidir (!@#$%^&*()_+-=[]{}|;:,.<>?)."
+
+#: game/forms.py:129 game/forms.py:317
+msgid "Passwords don't match."
+msgstr "Şifreler eşleşmiyor."
+
+#: game/forms.py:161
+msgid "Email or Username"
+msgstr "E-posta veya Kullanıcı Adı"
+
+#: game/forms.py:164
+msgid "Enter your email or username"
+msgstr "E-posta veya kullanıcı adınızı girin"
+
+#: game/forms.py:173
+msgid "Enter your password"
+msgstr "Şifrenizi girin"
+
+#: game/forms.py:178
+msgid "Remember me"
+msgstr "Beni hatırla"
+
+#: game/forms.py:221
+msgid "Invalid email/username or password. Please try again."
+msgstr "Geçersiz e-posta/kullanıcı adı veya şifre. Lütfen tekrar deneyin."
+
+#: game/forms.py:225
+msgid "This account has been deactivated."
+msgstr "Bu hesap devre dışı bırakılmış."
+
+#: game/forms.py:243
+msgid "Enter your email address"
+msgstr "E-posta adresinizi girin"
+
+#: game/forms.py:246
+msgid "Enter the email address associated with your account."
+msgstr "Hesabınızla ilişkili e-posta adresini girin."
+
+#: game/forms.py:260
+msgid "New Password"
+msgstr "Yeni Şifre"
+
+#: game/forms.py:263
+msgid "Enter new password"
+msgstr "Yeni şifre girin"
+
+#: game/forms.py:269
+msgid "Confirm New Password"
+msgstr "Yeni Şifreyi Onayla"
+
+#: game/forms.py:272
+msgid "Confirm new password"
+msgstr "Yeni şifreyi onaylayın"
+
+#: game/models.py:73
+msgid "Unique identifier for the player."
+msgstr ""
+
+#: game/models.py:78
+msgid "Current level in the active run."
+msgstr ""
+
+#: game/models.py:83
+#, fuzzy
+#| msgid "All rights reserved."
+msgid "All-time highest score achieved."
+msgstr "Tüm hakları saklıdır."
+
+#: game/models.py:88
+msgid "Whether this is a temporary guest account."
+msgstr ""
+
+#: game/models.py:95
+msgid "Preferred language for the game interface."
+msgstr ""
+
+#: game/models.py:100
+msgid "Total number of game runs started."
+msgstr ""
+
+#: game/models.py:105
+msgid "Total number of levels successfully completed."
+msgstr ""
+
+#: game/models.py:110
+#, fuzzy
+#| msgid "This account has been deactivated."
+msgid "Timestamp when account was created."
+msgstr "Bu hesap devre dışı bırakılmış."
+
+#: game/models.py:115
+msgid "Timestamp when account was last updated."
+msgstr ""
+
+#: game/models.py:119 game/templates/game/index.html:173
 msgid "Player"
 msgstr "Oyuncu"
 
-#: game/templates/game/index.html
-msgid "My Statistics"
-msgstr "İstatistiklerim"
+#: game/models.py:120
+#, fuzzy
+#| msgid "Player"
+msgid "Players"
+msgstr "Oyuncu"
 
-#: JavaScript messages
-msgid "You Won! Click Next Level to continue."
-msgstr "Kazandınız! Devam etmek için Sonraki Seviye'ye tıklayın."
+#: game/models.py:195
+msgid "Active"
+msgstr ""
 
-msgid "Game Over! Click New Game to restart."
-msgstr "Oyun Bitti! Yeniden başlamak için Yeni Oyun'a tıklayın."
+#: game/models.py:196
+msgid "Paused"
+msgstr ""
 
-msgid "An error occurred."
-msgstr "Bir hata oluştu."
+#: game/models.py:197
+msgid "Won"
+msgstr ""
 
-msgid "Clue Mode Active! Click a hidden cell."
-msgstr "İpucu Modu Aktif! Gizli bir hücreye tıklayın."
+#: game/models.py:198
+msgid "Lost"
+msgstr ""
 
-msgid "No clues remaining!"
-msgstr "Kalan ipucu yok!"
+#: game/models.py:199
+#, fuzzy
+#| msgid "Abandon Run"
+msgid "Abandoned"
+msgstr "Oyunu Bırak"
 
-msgid "Session expired. Please refresh the page."
-msgstr "Oturum süresi doldu. Lütfen sayfayı yenileyin."
+#: game/models.py:205
+msgid "Unique identifier for the game session."
+msgstr ""
 
-msgid "Network error. Please check your connection."
-msgstr "Ağ hatası. Lütfen bağlantınızı kontrol edin."
+#: game/models.py:212
+msgid "The player who owns this session."
+msgstr ""
 
-msgid "Are you sure you want to abandon this run? Your progress will be saved to the leaderboard."
-msgstr "Bu oyunu bırakmak istediğinizden emin misiniz? İlerlemeniz liderlik tablosuna kaydedilecek."
+#: game/models.py:218
+msgid "JSON representation of the game board state."
+msgstr ""
 
-msgid "Level Complete!"
-msgstr "Seviye Tamamlandı!"
+#: game/models.py:223
+msgid "Current level number in this run."
+msgstr ""
 
-msgid "Game Over!"
-msgstr "Oyun Bitti!"
+#: game/models.py:228
+msgid "Number of 'Clue' power-ups remaining for this level."
+msgstr ""
 
-msgid "You cleared Level"
-msgstr "Seviyeyi tamamladınız"
+#: game/models.py:233
+msgid "Accumulated score for this run."
+msgstr ""
 
-msgid "You reached Level"
-msgstr "Ulaştığınız seviye"
+#: game/models.py:240
+msgid "Current status of the game session."
+msgstr ""
 
-msgid "with"
-msgstr "ile"
+#: game/models.py:246
+msgid "Whether this session is currently active."
+msgstr ""
 
-msgid "points"
-msgstr "puan"
+#: game/models.py:251
+msgid "Total time elapsed in seconds."
+msgstr ""
 
-msgid "New Run"
-msgstr "Yeni Oyun"
+#: game/models.py:256
+msgid "Number of cells revealed in this session."
+msgstr ""
 
-msgid "Try Again"
-msgstr "Tekrar Dene"
+#: game/models.py:261
+msgid "Number of flags currently placed."
+msgstr ""
 
-msgid "Playing"
-msgstr "Oynanıyor"
+#: game/models.py:266
+msgid "Timestamp when session was created."
+msgstr ""
 
-msgid "Victory!"
-msgstr "Zafer!"
+#: game/models.py:271
+msgid "Timestamp when session was last updated."
+msgstr ""
 
-msgid "Clue Mode"
-msgstr "İpucu Modu"
+#: game/models.py:275
+#, fuzzy
+#| msgid "Game Stats"
+msgid "Game Session"
+msgstr "Oyun İstatistikleri"
 
-msgid "Welcome to RogueSweeper!"
-msgstr "RogueSweeper'a Hoş Geldiniz!"
+#: game/models.py:276
+#, fuzzy
+#| msgid "Game Stats"
+msgid "Game Sessions"
+msgstr "Oyun İstatistikleri"
 
-msgid "A roguelike Minesweeper with infinite levels."
-msgstr "Sonsuz seviyeli roguelike bir Mayın Tarlası."
+#: game/models.py:442
+msgid "Unique identifier for the score record."
+msgstr ""
 
-msgid "Click New Game to start your run!"
-msgstr "Yeni Oyun'a tıklayarak başlayın!"
+#: game/models.py:449
+msgid "The player who achieved this score."
+msgstr ""
+
+#: game/models.py:458
+msgid "Reference to the original game session."
+msgstr ""
+
+#: game/models.py:464
+msgid "Highest level reached in this run."
+msgstr ""
+
+#: game/models.py:470
+msgid "Total score achieved in this run."
+msgstr ""
+
+#: game/models.py:475
+msgid "Total time taken in seconds."
+msgstr ""
+
+#: game/models.py:480
+msgid "Total cells revealed across all levels."
+msgstr ""
+
+#: game/models.py:485
+msgid "Total clues used during the run."
+msgstr ""
+
+#: game/models.py:490
+msgid "Whether the run ended in victory (vs game over)."
+msgstr ""
+
+#: game/models.py:496
+msgid "Timestamp when this run was completed."
+msgstr ""
+
+#: game/models.py:500 game/templates/game/index.html:36
+#: game/templates/game/index.html:174
+msgid "Score"
+msgstr "Puan"
+
+#: game/models.py:501
+#, fuzzy
+#| msgid "Score"
+msgid "Scores"
+msgstr "Puan"
+
+#: game/templates/game/auth/login.html:5 game/templates/game/auth/login.html:24
+#: game/templates/game/auth/login.html:86
+#: game/templates/game/auth/password_reset.html:73
+#: game/templates/game/auth/signup.html:125 game/templates/game/base.html:91
+msgid "Log In"
+msgstr "Giriş Yap"
+
+#: game/templates/game/auth/login.html:70
+msgid "Forgot Password?"
+msgstr "Şifremi Unuttum?"
+
+#: game/templates/game/auth/login.html:92
+msgid "Don't have an account?"
+msgstr "Hesabınız yok mu?"
 
 # =============================================================================
 # Authentication Pages
 # =============================================================================
-
+#: game/templates/game/auth/login.html:94
+#: game/templates/game/auth/signup.html:5
+#: game/templates/game/auth/signup.html:117 game/templates/game/base.html:96
 msgid "Sign Up"
 msgstr "Kayıt Ol"
 
-msgid "Log In"
-msgstr "Giriş Yap"
-
-msgid "Guest"
-msgstr "Misafir"
-
-msgid "Create Account"
-msgstr "Hesap Oluştur"
-
-msgid "Email"
-msgstr "E-posta"
-
-msgid "Enter your email"
-msgstr "E-postanızı girin"
-
-msgid "We'll use this for password recovery."
-msgstr "Şifre kurtarma için kullanılacaktır."
-
-msgid "Username"
-msgstr "Kullanıcı Adı"
-
-msgid "Choose a username"
-msgstr "Bir kullanıcı adı seçin"
-
-msgid "3-30 characters. Letters, digits and @/./+/-/_ only."
-msgstr "3-30 karakter. Sadece harfler, rakamlar ve @/./+/-/_ karakterleri."
-
-msgid "Password"
-msgstr "Şifre"
-
-msgid "Create a password"
-msgstr "Bir şifre oluşturun"
-
-msgid "Confirm Password"
-msgstr "Şifreyi Onayla"
-
-msgid "Confirm your password"
-msgstr "Şifrenizi onaylayın"
-
-msgid "Password Requirements:"
-msgstr "Şifre Gereksinimleri:"
-
-msgid "At least 8 characters long"
-msgstr "En az 8 karakter uzunluğunda"
-
-msgid "At least one uppercase letter (A-Z)"
-msgstr "En az bir büyük harf (A-Z)"
-
-msgid "At least one lowercase letter (a-z)"
-msgstr "En az bir küçük harf (a-z)"
-
-msgid "At least one digit (0-9)"
-msgstr "En az bir rakam (0-9)"
-
-msgid "At least one special character (!@#$%^&*)"
-msgstr "En az bir özel karakter (!@#$%^&*)"
-
-msgid "Already have an account?"
-msgstr "Zaten hesabınız var mı?"
-
-msgid "Don't have an account?"
-msgstr "Hesabınız yok mu?"
-
-msgid "Back to Game"
-msgstr "Oyuna Dön"
-
+#: game/templates/game/auth/login.html:102
 msgid "Back to Game (Play as Guest)"
 msgstr "Oyuna Dön (Misafir Olarak Oyna)"
 
-msgid "Email or Username"
-msgstr "E-posta veya Kullanıcı Adı"
-
-msgid "Enter your email or username"
-msgstr "E-posta veya kullanıcı adınızı girin"
-
-msgid "Enter your password"
-msgstr "Şifrenizi girin"
-
-msgid "Remember me"
-msgstr "Beni hatırla"
-
-msgid "Forgot Password?"
-msgstr "Şifremi Unuttum?"
-
+#: game/templates/game/auth/password_reset.html:5
+#: game/templates/game/auth/password_reset.html:24
+#: game/templates/game/auth/password_reset_confirm.html:82
 msgid "Reset Password"
 msgstr "Şifreyi Sıfırla"
 
-msgid "Enter your email address and we'll send you a link to reset your password."
-msgstr "E-posta adresinizi girin, şifrenizi sıfırlamanız için size bir bağlantı göndereceğiz."
+#: game/templates/game/auth/password_reset.html:29
+msgid ""
+"Enter your email address and we'll send you a link to reset your password."
+msgstr ""
+"E-posta adresinizi girin, şifrenizi sıfırlamanız için size bir bağlantı "
+"göndereceğiz."
 
-msgid "Enter your email address"
-msgstr "E-posta adresinizi girin"
-
-msgid "Enter the email address associated with your account."
-msgstr "Hesabınızla ilişkili e-posta adresini girin."
-
+#: game/templates/game/auth/password_reset.html:65
 msgid "Send Reset Link"
 msgstr "Sıfırlama Bağlantısı Gönder"
 
+#: game/templates/game/auth/password_reset.html:71
 msgid "Remember your password?"
 msgstr "Şifrenizi hatırlıyor musunuz?"
 
+#: game/templates/game/auth/password_reset.html:81
+#: game/templates/game/auth/signup.html:133
+msgid "Back to Game"
+msgstr "Oyuna Dön"
+
+#: game/templates/game/auth/password_reset_confirm.html:5
+#: game/templates/game/auth/password_reset_confirm.html:15
 msgid "Set New Password"
 msgstr "Yeni Şifre Belirle"
 
-msgid "New Password"
-msgstr "Yeni Şifre"
+#: game/templates/game/auth/password_reset_confirm.html:42
+#: game/templates/game/auth/signup.html:77
+msgid "Password Requirements:"
+msgstr "Şifre Gereksinimleri:"
 
-msgid "Enter new password"
-msgstr "Yeni şifre girin"
+#: game/templates/game/auth/password_reset_confirm.html:45
+#: game/templates/game/auth/signup.html:80
+msgid "At least 8 characters long"
+msgstr "En az 8 karakter uzunluğunda"
 
-msgid "Confirm New Password"
-msgstr "Yeni Şifreyi Onayla"
+#: game/templates/game/auth/password_reset_confirm.html:46
+#: game/templates/game/auth/signup.html:81
+msgid "At least one uppercase letter (A-Z)"
+msgstr "En az bir büyük harf (A-Z)"
 
-msgid "Confirm new password"
-msgstr "Yeni şifreyi onaylayın"
+#: game/templates/game/auth/password_reset_confirm.html:47
+#: game/templates/game/auth/signup.html:82
+msgid "At least one lowercase letter (a-z)"
+msgstr "En az bir küçük harf (a-z)"
 
+#: game/templates/game/auth/password_reset_confirm.html:48
+#: game/templates/game/auth/signup.html:83
+msgid "At least one digit (0-9)"
+msgstr "En az bir rakam (0-9)"
+
+#: game/templates/game/auth/password_reset_confirm.html:49
+#: game/templates/game/auth/signup.html:84
+#, fuzzy, python-format
+#| msgid "At least one special character (!@#$%^&*)"
+msgid "At least one special character (!@#$%%^&*)"
+msgstr "En az bir özel karakter (!@#$%^&*)"
+
+#: game/templates/game/auth/password_reset_confirm.html:92
 msgid "Invalid Reset Link"
 msgstr "Geçersiz Sıfırlama Bağlantısı"
 
-msgid "This password reset link is invalid or has expired. Please request a new one."
-msgstr "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeni bir tane isteyin."
+#: game/templates/game/auth/password_reset_confirm.html:94
+msgid ""
+"This password reset link is invalid or has expired. Please request a new one."
+msgstr ""
+"Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeni bir "
+"tane isteyin."
 
+#: game/templates/game/auth/password_reset_confirm.html:97
 msgid "Request New Link"
 msgstr "Yeni Bağlantı İste"
 
+#: game/templates/game/auth/password_reset_confirm.html:106
 msgid "Back to Login"
 msgstr "Giriş Sayfasına Dön"
 
 # Password Reset Email
+#: game/templates/game/auth/password_reset_email.html:13
 msgid "Password Reset Request"
 msgstr "Şifre Sıfırlama İsteği"
 
+#: game/templates/game/auth/password_reset_email.html:15
 msgid "Hello"
 msgstr "Merhaba"
 
-msgid "We received a request to reset your password for your RogueSweeper account. Click the button below to set a new password:"
-msgstr "RogueSweeper hesabınızın şifresini sıfırlamak için bir istek aldık. Yeni bir şifre belirlemek için aşağıdaki düğmeye tıklayın:"
+#: game/templates/game/auth/password_reset_email.html:18
+msgid ""
+"We received a request to reset your password for your RogueSweeper account. "
+"Click the button below to set a new password:"
+msgstr ""
+"RogueSweeper hesabınızın şifresini sıfırlamak için bir istek aldık. Yeni bir "
+"şifre belirlemek için aşağıdaki düğmeye tıklayın:"
 
+#: game/templates/game/auth/password_reset_email.html:24
 msgid "Reset My Password"
 msgstr "Şifremi Sıfırla"
 
+#: game/templates/game/auth/password_reset_email.html:29
 msgid "This link will expire in 24 hours for security reasons."
 msgstr "Bu bağlantı güvenlik nedeniyle 24 saat içinde sona erecektir."
 
-msgid "If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged."
-msgstr "Şifre sıfırlama isteğinde bulunmadıysanız, bu e-postayı güvenle yok sayabilirsiniz. Şifreniz değişmeyecektir."
+#: game/templates/game/auth/password_reset_email.html:33
+msgid ""
+"If you didn't request a password reset, you can safely ignore this email. "
+"Your password will remain unchanged."
+msgstr ""
+"Şifre sıfırlama isteğinde bulunmadıysanız, bu e-postayı güvenle yok "
+"sayabilirsiniz. Şifreniz değişmeyecektir."
 
+#: game/templates/game/auth/password_reset_email.html:39
 msgid "If the button doesn't work, copy and paste this link into your browser:"
 msgstr "Düğme çalışmazsa, bu bağlantıyı kopyalayıp tarayıcınıza yapıştırın:"
 
+#: game/templates/game/auth/password_reset_email.html:45
 msgid "A roguelike Minesweeper game"
 msgstr "Roguelike bir Mayın Tarlası oyunu"
 
-# Auth success messages
-msgid "Account created successfully! Please log in."
-msgstr "Hesap başarıyla oluşturuldu! Lütfen giriş yapın."
+#: game/templates/game/auth/signup.html:14
+msgid "Create Account"
+msgstr "Hesap Oluştur"
 
-msgid "Welcome back, {}!"
-msgstr "Tekrar hoş geldin, {}!"
+#: game/templates/game/auth/signup.html:123
+msgid "Already have an account?"
+msgstr "Zaten hesabınız var mı?"
 
-msgid "You have been logged out."
-msgstr "Çıkış yaptınız."
+#: game/templates/game/base.html:38 game/templates/game/index.html:5
+msgid "Play"
+msgstr "Oyna"
 
-msgid "If an account with that email exists, we've sent password reset instructions."
-msgstr "Bu e-posta ile bir hesap varsa, şifre sıfırlama talimatları gönderdik."
+#: game/templates/game/base.html:43 game/templates/game/index.html:164
+msgid "Leaderboard"
+msgstr "Liderlik Tablosu"
 
-msgid "This password reset link is invalid or has expired."
-msgstr "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+#: game/templates/game/base.html:51
+msgid "Language selection"
+msgstr "Dil seçimi"
 
-msgid "Your password has been reset successfully! Please log in."
-msgstr "Şifreniz başarıyla sıfırlandı! Lütfen giriş yapın."
+#: game/templates/game/base.html:74
+msgid "My Stats"
+msgstr "İstatistiklerim"
 
-# Form validation errors
-msgid "An account with this email already exists."
-msgstr "Bu e-posta ile bir hesap zaten mevcut."
+#: game/templates/game/base.html:78
+msgid "Logout"
+msgstr "Çıkış Yap"
 
-msgid "Username must be at least 3 characters long."
-msgstr "Kullanıcı adı en az 3 karakter olmalıdır."
+#: game/templates/game/base.html:86
+msgid "Guest"
+msgstr "Misafir"
 
-msgid "This username is already taken."
-msgstr "Bu kullanıcı adı zaten alınmış."
+#: game/templates/game/base.html:125
+msgid "All rights reserved."
+msgstr "Tüm hakları saklıdır."
 
-msgid "Password must be at least 8 characters long."
-msgstr "Şifre en az 8 karakter uzunluğunda olmalıdır."
+#: game/templates/game/index.html:30 game/templates/game/index.html:175
+msgid "Level"
+msgstr "Seviye"
 
-msgid "Password must contain at least one uppercase letter."
-msgstr "Şifre en az bir büyük harf içermelidir."
+#: game/templates/game/index.html:42
+msgid "Mines"
+msgstr "Mayınlar"
 
-msgid "Password must contain at least one lowercase letter."
-msgstr "Şifre en az bir küçük harf içermelidir."
+#: game/templates/game/index.html:48
+msgid "Flags"
+msgstr "Bayraklar"
 
-msgid "Password must contain at least one digit."
-msgstr "Şifre en az bir rakam içermelidir."
+#: game/templates/game/index.html:54
+msgid "Clues"
+msgstr "İpuçları"
 
-msgid "Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)."
-msgstr "Şifre en az bir özel karakter içermelidir (!@#$%^&*()_+-=[]{}|;:,.<>?)."
+#: game/templates/game/index.html:60 game/templates/game/index.html:176
+msgid "Time"
+msgstr "Süre"
 
-msgid "Passwords don't match."
-msgstr "Şifreler eşleşmiyor."
+#: game/templates/game/index.html:70
+msgid "Controls"
+msgstr "Kontroller"
 
-msgid "Invalid email/username or password. Please try again."
-msgstr "Geçersiz e-posta/kullanıcı adı veya şifre. Lütfen tekrar deneyin."
+#: game/templates/game/index.html:77
+msgid "New Game"
+msgstr "Yeni Oyun"
 
-msgid "This account has been deactivated."
-msgstr "Bu hesap devre dışı bırakılmış."
+#: game/templates/game/index.html:82
+msgid "Use Clue"
+msgstr "İpucu Kullan"
 
-msgid "Reset Your RogueSweeper Password"
-msgstr "RogueSweeper Şifrenizi Sıfırlayın"
+#: game/templates/game/index.html:87 game/templates/game/index.html:236
+msgid "Next Level"
+msgstr "Sonraki Seviye"
 
 # Save Progress feature
+#: game/templates/game/index.html:93
 msgid "Save Progress"
 msgstr "İlerlemeyi Kaydet"
 
+#: game/templates/game/index.html:99
+msgid "Abandon Run"
+msgstr "Oyunu Bırak"
+
+#: game/templates/game/index.html:109
+msgid "How to Play"
+msgstr "Nasıl Oynanır"
+
+#: game/templates/game/index.html:114
+msgid "Left Click"
+msgstr "Sol Tık"
+
+#: game/templates/game/index.html:114
+msgid "Reveal cell"
+msgstr "Hücreyi aç"
+
+#: game/templates/game/index.html:115
+msgid "Right Click"
+msgstr "Sağ Tık"
+
+#: game/templates/game/index.html:115
+msgid "Place/Remove flag"
+msgstr "Bayrak koy/kaldır"
+
+#: game/templates/game/index.html:116
+msgid "Middle Click"
+msgstr "Orta Tık"
+
+#: game/templates/game/index.html:116
+msgid "Chord reveal"
+msgstr "Toplu açma"
+
+#: game/templates/game/index.html:117
+msgid "Clue"
+msgstr "İpucu"
+
+#: game/templates/game/index.html:117
+msgid "Safely test any cell"
+msgstr "Herhangi bir hücreyi güvenle test et"
+
+#: game/templates/game/index.html:128
+msgid "Game Board"
+msgstr "Oyun Tahtası"
+
+#: game/templates/game/index.html:130 game/templates/game/index.html:241
+msgid "Ready"
+msgstr "Hazır"
+
+#: game/templates/game/index.html:136
+msgid "Loading..."
+msgstr "Yükleniyor..."
+
+#: game/templates/game/index.html:138
+msgid "Loading game..."
+msgstr "Oyun yükleniyor..."
+
+#: game/templates/game/index.html:194
+msgid "My Statistics"
+msgstr "İstatistiklerim"
+
+#: game/templates/game/index.html:222
+msgid "You Won! Click Next Level to continue."
+msgstr "Kazandınız! Devam etmek için Sonraki Seviye'ye tıklayın."
+
+#: game/templates/game/index.html:223
+msgid "Game Over! Click New Game to restart."
+msgstr "Oyun Bitti! Yeniden başlamak için Yeni Oyun'a tıklayın."
+
+#: game/templates/game/index.html:224
+msgid "An error occurred."
+msgstr "Bir hata oluştu."
+
+#: game/templates/game/index.html:225
+msgid "Clue Mode Active! Click a hidden cell."
+msgstr "İpucu Modu Aktif! Gizli bir hücreye tıklayın."
+
+#: game/templates/game/index.html:226
+msgid "No clues remaining!"
+msgstr "Kalan ipucu yok!"
+
+#: game/templates/game/index.html:227
+msgid "Session expired. Please refresh the page."
+msgstr "Oturum süresi doldu. Lütfen sayfayı yenileyin."
+
+#: game/templates/game/index.html:228
+msgid "Network error. Please check your connection."
+msgstr "Ağ hatası. Lütfen bağlantınızı kontrol edin."
+
+#: game/templates/game/index.html:229
+msgid ""
+"Are you sure you want to abandon this run? Your progress will be saved to "
+"the leaderboard."
+msgstr ""
+"Bu oyunu bırakmak istediğinizden emin misiniz? İlerlemeniz liderlik "
+"tablosuna kaydedilecek."
+
+#: game/templates/game/index.html:230
+msgid "Level Complete!"
+msgstr "Seviye Tamamlandı!"
+
+#: game/templates/game/index.html:231
+msgid "Game Over!"
+msgstr "Oyun Bitti!"
+
+#: game/templates/game/index.html:232
+msgid "You cleared Level"
+msgstr "Seviyeyi tamamladınız"
+
+#: game/templates/game/index.html:233
+msgid "You reached Level"
+msgstr "Ulaştığınız seviye"
+
+#: game/templates/game/index.html:234
+msgid "with"
+msgstr "ile"
+
+#: game/templates/game/index.html:235
+msgid "points"
+msgstr "puan"
+
+#: game/templates/game/index.html:237
+msgid "New Run"
+msgstr "Yeni Oyun"
+
+#: game/templates/game/index.html:238
+msgid "Try Again"
+msgstr "Tekrar Dene"
+
+#: game/templates/game/index.html:239
+msgid "Playing"
+msgstr "Oynanıyor"
+
+#: game/templates/game/index.html:240
+msgid "Victory!"
+msgstr "Zafer!"
+
+#: game/templates/game/index.html:242
+msgid "Clue Mode"
+msgstr "İpucu Modu"
+
+#: game/templates/game/index.html:243
+msgid "Welcome to RogueSweeper!"
+msgstr "RogueSweeper'a Hoş Geldiniz!"
+
+#: game/templates/game/index.html:244
+msgid "A roguelike Minesweeper with infinite levels."
+msgstr "Sonsuz seviyeli roguelike bir Mayın Tarlası."
+
+#: game/templates/game/index.html:245
+msgid "Click New Game to start your run!"
+msgstr "Yeni Oyun'a tıklayarak başlayın!"
+
+#: game/templates/game/index.html:246
 msgid "Progress saved successfully!"
 msgstr "İlerleme başarıyla kaydedildi!"
 
+#: game/templates/game/index.html:247
 msgid "Progress saved! New high score!"
 msgstr "İlerleme kaydedildi! Yeni yüksek puan!"
 
+#: game/templates/game/index.html:248
 msgid "Could not save progress."
 msgstr "İlerleme kaydedilemedi."
+
+#~ msgid "Login"
+#~ msgstr "Giriş Yap"
