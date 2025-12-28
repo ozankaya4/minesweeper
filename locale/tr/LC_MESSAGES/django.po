@@ -784,5 +784,14 @@ msgstr "Dokun"
 msgid "Long Press"
 msgstr "Uzun Bas"
 
+msgid "Reveal"
+msgstr "Aç"
+
+msgid "Flag"
+msgstr "Bayrak"
+
+msgid "Tap mode"
+msgstr "Dokunma modu"
+
 #~ msgid "Login"
 #~ msgstr "Giriş Yap"

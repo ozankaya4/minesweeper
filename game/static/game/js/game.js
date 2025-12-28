@@ -47,7 +47,8 @@ const RogueSweeper = (function() {
         cell: null,
         isLongPress: false,
         moved: false,
-        skipNextClick: false  // Flag to prevent click after long press
+        skipNextClick: false,  // Flag to prevent click after long press
+        isFlagMode: false  // Flag mode toggle for mobile
     };
 
     // =============================================================================
@@ -283,6 +284,11 @@ const RogueSweeper = (function() {
         elements.btnAbandon = document.getElementById('btn-abandon');
         elements.btnSaveProgress = document.getElementById('btn-save-progress');
         
+        // Mobile flag mode toggle
+        elements.flagModeToggle = document.getElementById('flag-mode-toggle');
+        elements.btnModeReveal = document.getElementById('btn-mode-reveal');
+        elements.btnModeFlag = document.getElementById('btn-mode-flag');
+        
         // Modals
         elements.leaderboardModal = document.getElementById('leaderboardModal');
         elements.statsModal = document.getElementById('statsModal');
@@ -313,6 +319,9 @@ const RogueSweeper = (function() {
             elements.btnSaveProgress.addEventListener('click', saveProgress);
         }
         
+        // Mobile flag mode toggle
+        initMobileFlagMode();
+        
         // Leaderboard link
         const leaderboardLink = document.getElementById('leaderboard-link');
         if (leaderboardLink) {
@@ -333,6 +342,56 @@ const RogueSweeper = (function() {
         
         // Keyboard shortcuts
         document.addEventListener('keydown', handleKeyboard);
+    }
+
+    /**
+     * Initialize mobile flag mode toggle
+     * Shows toggle on touch devices, handles button clicks
+     */
+    function initMobileFlagMode() {
+        // Check if this is a touch device
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        
+        if (isTouchDevice && elements.flagModeToggle) {
+            // Show the toggle on touch devices
+            elements.flagModeToggle.classList.remove('d-none');
+            
+            // Reveal mode button click
+            if (elements.btnModeReveal) {
+                elements.btnModeReveal.addEventListener('click', () => {
+                    setFlagMode(false);
+                });
+            }
+            
+            // Flag mode button click
+            if (elements.btnModeFlag) {
+                elements.btnModeFlag.addEventListener('click', () => {
+                    setFlagMode(true);
+                });
+            }
+        }
+    }
+
+    /**
+     * Set flag mode on/off
+     * @param {boolean} enabled - Whether flag mode is enabled
+     */
+    function setFlagMode(enabled) {
+        touchState.isFlagMode = enabled;
+        
+        if (elements.btnModeReveal && elements.btnModeFlag) {
+            if (enabled) {
+                elements.btnModeReveal.classList.remove('btn-primary', 'active');
+                elements.btnModeReveal.classList.add('btn-outline-primary');
+                elements.btnModeFlag.classList.remove('btn-outline-warning');
+                elements.btnModeFlag.classList.add('btn-warning', 'active');
+            } else {
+                elements.btnModeReveal.classList.remove('btn-outline-primary');
+                elements.btnModeReveal.classList.add('btn-primary', 'active');
+                elements.btnModeFlag.classList.remove('btn-warning', 'active');
+                elements.btnModeFlag.classList.add('btn-outline-warning');
+            }
+        }
     }
 
     /**
@@ -759,6 +818,17 @@ const RogueSweeper = (function() {
         
         // Don't allow if game is over
         if (state.gameData?.board?.game_over) {
+            return;
+        }
+        
+        // If in flag mode, toggle flag instead of reveal
+        if (touchState.isFlagMode) {
+            // Only allow flagging hidden cells
+            if (cell.classList.contains('hidden') || 
+                cell.classList.contains('flagged') || 
+                cell.classList.contains('flagged-immune')) {
+                await performAction(row, col, 'flag');
+            }
             return;
         }
         

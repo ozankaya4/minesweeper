@@ -72,6 +72,19 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
+                        <!-- Mobile Flag Mode Toggle (only visible on touch devices) -->
+                        <div id="flag-mode-toggle" class="d-none mb-2">
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" id="btn-mode-reveal" class="btn btn-primary active">
+                                    <i class="bi bi-hand-index me-1"></i>{% trans "Reveal" %}
+                                </button>
+                                <button type="button" id="btn-mode-flag" class="btn btn-outline-warning">
+                                    <i class="bi bi-flag-fill me-1"></i>{% trans "Flag" %}
+                                </button>
+                            </div>
+                            <small class="text-muted d-block text-center mt-1">{% trans "Tap mode" %}</small>
+                        </div>
+                        
                         <!-- New Game Button -->
                         <button id="btn-new-game" class="btn btn-success btn-lg">
                             <i class="bi bi-play-fill me-2"></i>{% trans "New Game" %}
