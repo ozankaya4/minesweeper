@@ -92,10 +92,17 @@ WSGI_APPLICATION = 'roguesweeper.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 # SQLite for development, PostgreSQL for production
 
+# Ensure database path is always absolute
+_db_name = os.environ.get('DB_NAME', '')
+if not _db_name:
+    _db_name = BASE_DIR / 'db.sqlite3'
+elif not os.path.isabs(_db_name):
+    _db_name = BASE_DIR / _db_name
+
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'NAME': _db_name,
         'USER': os.environ.get('DB_USER', ''),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', ''),
