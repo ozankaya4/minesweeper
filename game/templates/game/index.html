@@ -122,19 +122,17 @@
                     <!-- Mobile Controls -->
                     <div class="d-block d-md-none">
                         <ul class="mb-2 ps-3">
-                            <li><strong>{% trans "Tap" %}</strong>: {% trans "Reveal or Flag (use toggle)" %}</li>
+                            <li><strong>{% trans "Tap" %}</strong>: {% trans "Reveal or Flag (use switch)" %}</li>
                             <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
                         </ul>
-                        <!-- Mobile Flag Mode Toggle -->
-                        <div id="flag-mode-toggle" class="mt-2">
-                            <small class="text-muted d-block text-center mb-1">{% trans "Tap mode" %}</small>
-                            <div class="btn-group w-100" role="group">
-                                <button type="button" id="btn-mode-reveal" class="btn btn-primary active">
-                                    <i class="bi bi-hand-index me-1"></i>{% trans "Reveal" %}
-                                </button>
-                                <button type="button" id="btn-mode-flag" class="btn btn-outline-warning">
-                                    <i class="bi bi-flag-fill me-1"></i>{% trans "Flag" %}
-                                </button>
+                        <!-- Mobile Flag Mode Switch -->
+                        <div id="flag-mode-toggle" class="mt-3 p-2 bg-dark rounded">
+                            <div class="d-flex align-items-center justify-content-center gap-3">
+                                <span class="text-primary fw-bold"><i class="bi bi-hand-index me-1"></i>{% trans "Reveal" %}</span>
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="flag-mode-switch" style="width: 3em; height: 1.5em; cursor: pointer;">
+                                </div>
+                                <span id="flag-mode-label" class="text-muted"><i class="bi bi-flag-fill me-1"></i>{% trans "Flag" %}</span>
                             </div>
                         </div>
                     </div>

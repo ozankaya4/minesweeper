@@ -286,8 +286,8 @@ const RogueSweeper = (function() {
         
         // Mobile flag mode toggle
         elements.flagModeToggle = document.getElementById('flag-mode-toggle');
-        elements.btnModeReveal = document.getElementById('btn-mode-reveal');
-        elements.btnModeFlag = document.getElementById('btn-mode-flag');
+        elements.flagModeSwitch = document.getElementById('flag-mode-switch');
+        elements.flagModeLabel = document.getElementById('flag-mode-label');
         
         // Modals
         elements.leaderboardModal = document.getElementById('leaderboardModal');
@@ -346,43 +346,29 @@ const RogueSweeper = (function() {
 
     /**
      * Initialize mobile flag mode toggle
-     * Handles button clicks for reveal/flag mode switching
+     * Handles checkbox change for reveal/flag mode switching
      */
     function initMobileFlagMode() {
-        // Reveal mode button click
-        if (elements.btnModeReveal) {
-            elements.btnModeReveal.addEventListener('click', (e) => {
-                e.preventDefault();
-                setFlagMode(false);
-            });
-        }
-        
-        // Flag mode button click
-        if (elements.btnModeFlag) {
-            elements.btnModeFlag.addEventListener('click', (e) => {
-                e.preventDefault();
-                setFlagMode(true);
+        if (elements.flagModeSwitch) {
+            elements.flagModeSwitch.addEventListener('change', function() {
+                touchState.isFlagMode = this.checked;
+                updateFlagModeDisplay();
+                console.log('Flag mode changed to:', touchState.isFlagMode);
             });
         }
     }
 
     /**
-     * Set flag mode on/off
-     * @param {boolean} enabled - Whether flag mode is enabled
+     * Update the visual display of flag mode
      */
-    function setFlagMode(enabled) {
-        touchState.isFlagMode = enabled;
-        console.log('Flag mode set to:', enabled); // Debug
-        
-        if (elements.btnModeReveal && elements.btnModeFlag) {
-            if (enabled) {
-                // Flag mode ON
-                elements.btnModeReveal.className = 'btn btn-outline-primary';
-                elements.btnModeFlag.className = 'btn btn-warning active';
+    function updateFlagModeDisplay() {
+        if (elements.flagModeLabel) {
+            if (touchState.isFlagMode) {
+                elements.flagModeLabel.classList.remove('text-muted');
+                elements.flagModeLabel.classList.add('text-warning', 'fw-bold');
             } else {
-                // Reveal mode ON
-                elements.btnModeReveal.className = 'btn btn-primary active';
-                elements.btnModeFlag.className = 'btn btn-outline-warning';
+                elements.flagModeLabel.classList.remove('text-warning', 'fw-bold');
+                elements.flagModeLabel.classList.add('text-muted');
             }
         }
     }
