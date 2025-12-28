@@ -777,5 +777,12 @@ msgstr "İlerleme kaydedildi! Yeni yüksek puan!"
 msgid "Could not save progress."
 msgstr "İlerleme kaydedilemedi."
 
+# Mobile controls
+msgid "Tap"
+msgstr "Dokun"
+
+msgid "Long Press"
+msgstr "Uzun Bas"
+
 #~ msgid "Login"
 #~ msgstr "Giriş Yap"

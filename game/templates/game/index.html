@@ -110,12 +110,23 @@
                     </h6>
                 </div>
                 <div class="card-body small">
-                    <ul class="mb-0 ps-3">
-                        <li><strong>{% trans "Left Click" %}</strong>: {% trans "Reveal cell" %}</li>
-                        <li><strong>{% trans "Right Click" %}</strong>: {% trans "Place/Remove flag" %}</li>
-                        <li><strong>{% trans "Middle Click" %}</strong>: {% trans "Chord reveal" %}</li>
-                        <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
-                    </ul>
+                    <!-- Desktop Controls -->
+                    <div class="d-none d-md-block">
+                        <ul class="mb-0 ps-3">
+                            <li><strong>{% trans "Left Click" %}</strong>: {% trans "Reveal cell" %}</li>
+                            <li><strong>{% trans "Right Click" %}</strong>: {% trans "Place/Remove flag" %}</li>
+                            <li><strong>{% trans "Middle Click" %}</strong>: {% trans "Chord reveal" %}</li>
+                            <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
+                        </ul>
+                    </div>
+                    <!-- Mobile Controls -->
+                    <div class="d-block d-md-none">
+                        <ul class="mb-0 ps-3">
+                            <li><strong>{% trans "Tap" %}</strong>: {% trans "Reveal cell" %}</li>
+                            <li><strong>{% trans "Long Press" %}</strong>: {% trans "Place/Remove flag" %}</li>
+                            <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

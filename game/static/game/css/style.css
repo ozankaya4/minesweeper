@@ -54,18 +54,7 @@
     -webkit-user-select: none;
 }
 
-/* Responsive cell sizes */
-@media (max-width: 576px) {
-    #game-grid {
-        grid-template-columns: repeat(var(--grid-cols), var(--cell-size-sm));
-    }
-    
-    .cell {
-        width: var(--cell-size-sm) !important;
-        height: var(--cell-size-sm) !important;
-        font-size: 12px !important;
-    }
-}
+/* Responsive cell sizes - handled in Mobile Responsive Styles section below */
 
 @media (min-width: 1200px) {
     #game-grid {
@@ -444,5 +433,167 @@ body.clue-mode #btn-clue {
     .cell.hidden:active {
         background: linear-gradient(145deg, #8a959f, #6c757d);
         transform: scale(0.95);
+    }
+}
+
+/* =============================================================================
+   Mobile Touch Styles
+   ============================================================================= */
+
+/* Touch active state (when user is pressing) */
+.cell.touch-active {
+    transform: scale(0.92);
+    background: linear-gradient(145deg, #8a959f, #5a6268) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Progress indicator for long press */
+.cell.touch-active.hidden::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-flagged);
+    animation: longPressProgress 0.5s linear forwards;
+}
+
+@keyframes longPressProgress {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+/* Make cells position relative for the progress bar */
+.cell {
+    position: relative;
+}
+
+/* =============================================================================
+   Mobile Responsive Styles
+   ============================================================================= */
+
+/* Smaller screens - optimize for mobile */
+@media (max-width: 576px) {
+    /* Larger touch targets on mobile */
+    :root {
+        --cell-size-sm: 36px;
+    }
+    
+    #game-grid {
+        grid-template-columns: repeat(var(--grid-cols), var(--cell-size-sm));
+        padding: 4px;
+        gap: 1px;
+    }
+    
+    .cell {
+        width: var(--cell-size-sm) !important;
+        height: var(--cell-size-sm) !important;
+        font-size: 14px !important;
+        border-radius: 3px;
+    }
+    
+    /* Adjust card spacing */
+    .card {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .card-header {
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    /* Smaller buttons on mobile */
+    .btn-lg {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Stats panel compact mode */
+    .d-flex.justify-content-between {
+        margin-bottom: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    
+    /* Hide some elements on very small screens */
+    .card .small {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Game container adjustments */
+    .game-container {
+        min-height: calc(100vh - 120px);
+        padding: 0.5rem !important;
+    }
+    
+    /* Navbar adjustments */
+    .navbar-brand {
+        font-size: 1rem !important;
+    }
+    
+    /* Game over overlay text */
+    #game-over-overlay .display-4 {
+        font-size: 1.5rem !important;
+    }
+    
+    #game-over-overlay .lead {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Extra small screens (very small phones) */
+@media (max-width: 375px) {
+    :root {
+        --cell-size-sm: 32px;
+    }
+    
+    .cell {
+        font-size: 12px !important;
+    }
+}
+
+/* Prevent zoom on double tap for game elements */
+#game-grid,
+.cell,
+.btn {
+    touch-action: manipulation;
+}
+
+/* Disable pull-to-refresh on game area */
+.game-container {
+    overscroll-behavior: contain;
+}
+
+/* Make sure grid doesn't overflow on mobile */
+@media (max-width: 992px) {
+    .card-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #game-grid {
+        margin: 0 auto;
+    }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container {
+        min-height: auto;
+    }
+    
+    /* Stack stats horizontally in landscape */
+    .col-lg-3 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .col-lg-3 .card {
+        flex: 1;
+        min-width: 150px;
     }
 }

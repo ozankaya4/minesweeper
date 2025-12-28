@@ -36,6 +36,20 @@ const RogueSweeper = (function() {
     };
 
     // =============================================================================
+    // Touch State (for mobile long-press flagging)
+    // =============================================================================
+    
+    const LONG_PRESS_DURATION = 500; // milliseconds
+    let touchState = {
+        timer: null,
+        startX: 0,
+        startY: 0,
+        cell: null,
+        isLongPress: false,
+        moved: false
+    };
+
+    // =============================================================================
     // DOM Elements
     // =============================================================================
     
@@ -486,10 +500,16 @@ const RogueSweeper = (function() {
         // Apply cell state
         applyCellState(cell, value);
         
-        // Add event listeners
+        // Add event listeners for desktop
         cell.addEventListener('click', handleLeftClick);
         cell.addEventListener('contextmenu', handleRightClick);
         cell.addEventListener('auxclick', handleMiddleClick);
+        
+        // Add touch event listeners for mobile (long-press to flag)
+        cell.addEventListener('touchstart', handleTouchStart, { passive: false });
+        cell.addEventListener('touchend', handleTouchEnd);
+        cell.addEventListener('touchmove', handleTouchMove, { passive: false });
+        cell.addEventListener('touchcancel', handleTouchCancel);
         
         return cell;
     }
@@ -612,6 +632,143 @@ const RogueSweeper = (function() {
         }
         
         await performAction(row, col, 'chord');
+    }
+
+    // =============================================================================
+    // Touch Handlers (Mobile Long-Press for Flagging)
+    // =============================================================================
+
+    /**
+     * Handle touch start - begin long press timer
+     * @param {TouchEvent} e - Touch event
+     */
+    function handleTouchStart(e) {
+        const cell = e.currentTarget;
+        
+        // Store touch start position
+        const touch = e.touches[0];
+        touchState.startX = touch.clientX;
+        touchState.startY = touch.clientY;
+        touchState.cell = cell;
+        touchState.isLongPress = false;
+        touchState.moved = false;
+        
+        // Add visual feedback
+        cell.classList.add('touch-active');
+        
+        // Start long press timer
+        touchState.timer = setTimeout(() => {
+            // Only flag if user hasn't moved
+            if (!touchState.moved) {
+                touchState.isLongPress = true;
+                
+                // Vibrate for haptic feedback (if supported)
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+                
+                // Perform flag action
+                handleLongPressFlag(cell);
+            }
+        }, LONG_PRESS_DURATION);
+    }
+
+    /**
+     * Handle touch move - cancel long press if moved too far
+     * @param {TouchEvent} e - Touch event
+     */
+    function handleTouchMove(e) {
+        if (!touchState.timer) return;
+        
+        const touch = e.touches[0];
+        const deltaX = Math.abs(touch.clientX - touchState.startX);
+        const deltaY = Math.abs(touch.clientY - touchState.startY);
+        
+        // If moved more than 10px, cancel long press
+        if (deltaX > 10 || deltaY > 10) {
+            touchState.moved = true;
+            clearTimeout(touchState.timer);
+            touchState.timer = null;
+            
+            if (touchState.cell) {
+                touchState.cell.classList.remove('touch-active');
+            }
+        }
+    }
+
+    /**
+     * Handle touch end - perform click if not long press
+     * @param {TouchEvent} e - Touch event
+     */
+    function handleTouchEnd(e) {
+        const cell = touchState.cell;
+        
+        // Clear the timer
+        if (touchState.timer) {
+            clearTimeout(touchState.timer);
+            touchState.timer = null;
+        }
+        
+        // Remove visual feedback
+        if (cell) {
+            cell.classList.remove('touch-active');
+        }
+        
+        // If it was a long press, action already performed - prevent click
+        if (touchState.isLongPress) {
+            e.preventDefault();
+            touchState.isLongPress = false;
+            return;
+        }
+        
+        // If user moved, don't perform click
+        if (touchState.moved) {
+            return;
+        }
+        
+        // Normal tap - let the click event handle it
+        // (click event fires after touchend)
+    }
+
+    /**
+     * Handle touch cancel
+     * @param {TouchEvent} e - Touch event
+     */
+    function handleTouchCancel(e) {
+        if (touchState.timer) {
+            clearTimeout(touchState.timer);
+            touchState.timer = null;
+        }
+        
+        if (touchState.cell) {
+            touchState.cell.classList.remove('touch-active');
+        }
+        
+        touchState.isLongPress = false;
+        touchState.moved = false;
+    }
+
+    /**
+     * Handle long press flag action
+     * @param {HTMLElement} cell - Cell element
+     */
+    async function handleLongPressFlag(cell) {
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        
+        // Only allow flagging hidden cells
+        if (!cell.classList.contains('hidden') && 
+            !cell.classList.contains('flagged') &&
+            !cell.classList.contains('flagged-immune')) {
+            return;
+        }
+        
+        // Don't allow if game is over
+        if (state.gameData?.board?.game_over) {
+            return;
+        }
+        
+        await performAction(row, col, 'flag');
     }
 
     /**
