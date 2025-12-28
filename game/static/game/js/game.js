@@ -553,21 +553,18 @@ const RogueSweeper = (function() {
         // Apply cell state
         applyCellState(cell, value);
         
-        // Check if device supports touch
+        // Add click events for all devices
+        cell.addEventListener('click', handleLeftClick);
+        cell.addEventListener('contextmenu', handleRightClick);
+        
+        // Check if device supports touch - add touch events for visual feedback
         const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         
         if (isTouchDevice) {
-            // Touch device: use touch events only
+            // Touch device: add touch events for visual feedback
             cell.addEventListener('touchstart', handleTouchStart, { passive: false });
-            cell.addEventListener('touchend', handleTouchEnd, { passive: false });
             cell.addEventListener('touchmove', handleTouchMove, { passive: false });
             cell.addEventListener('touchcancel', handleTouchCancel);
-            // Prevent context menu on long press
-            cell.addEventListener('contextmenu', (e) => e.preventDefault());
-        } else {
-            // Desktop: use mouse events
-            cell.addEventListener('click', handleLeftClick);
-            cell.addEventListener('contextmenu', handleRightClick);
             cell.addEventListener('auxclick', handleMiddleClick);
         }
         
@@ -629,6 +626,16 @@ const RogueSweeper = (function() {
         
         // Don't allow clicks if game is over
         if (state.gameData?.board?.game_over) {
+            return;
+        }
+        
+        // If in flag mode (mobile toggle), flag instead of reveal
+        if (touchState.isFlagMode) {
+            if (cell.classList.contains('hidden') || 
+                cell.classList.contains('flagged') || 
+                cell.classList.contains('flagged-immune')) {
+                await performAction(row, col, 'flag');
+            }
             return;
         }
         
