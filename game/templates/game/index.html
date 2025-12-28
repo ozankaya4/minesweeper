@@ -63,11 +63,13 @@
                 </div>
             </div>
             
-            <!-- Controls -->
+            <!-- Controls (Desktop) / Play (Mobile) -->
             <div class="card bg-secondary text-white shadow mt-3">
                 <div class="card-header bg-primary">
                     <h5 class="mb-0">
-                        <i class="bi bi-controller me-2"></i>{% trans "Controls" %}
+                        <i class="bi bi-controller me-2"></i>
+                        <span class="d-none d-md-inline">{% trans "Controls" %}</span>
+                        <span class="d-inline d-md-none">{% trans "Play" %}</span>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -77,8 +79,8 @@
                             <i class="bi bi-play-fill me-2"></i>{% trans "New Game" %}
                         </button>
                         
-                        <!-- Use Clue Button (Toggle) -->
-                        <button id="btn-clue" class="btn btn-outline-warning btn-lg" disabled>
+                        <!-- Use Clue Button (Desktop only - moved to Controls section on mobile) -->
+                        <button id="btn-clue" class="btn btn-outline-warning btn-lg d-none d-md-block" disabled>
                             <i class="bi bi-lightbulb me-2"></i>{% trans "Use Clue" %}
                         </button>
                         
@@ -119,21 +121,37 @@
                             <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
                         </ul>
                     </div>
-                    <!-- Mobile Controls -->
+                    <!-- Mobile Instructions -->
                     <div class="d-block d-md-none">
-                        <ul class="mb-2 ps-3">
+                        <ul class="mb-0 ps-3">
                             <li><strong>{% trans "Tap" %}</strong>: {% trans "Reveal or Flag (use switch)" %}</li>
                             <li><strong>{% trans "Clue" %}</strong>: {% trans "Safely test any cell" %}</li>
                         </ul>
-                        <!-- Mobile Flag Mode Switch -->
-                        <div id="flag-mode-toggle" class="mt-3 p-2 bg-dark rounded">
-                            <div class="d-flex align-items-center justify-content-center gap-3">
-                                <span class="text-primary fw-bold"><i class="bi bi-hand-index me-1"></i>{% trans "Reveal" %}</span>
-                                <div class="form-check form-switch m-0">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="flag-mode-switch" style="width: 3em; height: 1.5em; cursor: pointer;">
-                                </div>
-                                <span id="flag-mode-label" class="text-muted"><i class="bi bi-flag-fill me-1"></i>{% trans "Flag" %}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Controls Section (only visible on mobile) -->
+            <div class="card bg-secondary text-white shadow mt-3 d-block d-md-none">
+                <div class="card-header bg-primary">
+                    <h6 class="mb-0">
+                        <i class="bi bi-sliders me-2"></i>{% trans "Controls" %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Use Clue Button (Mobile) -->
+                    <button id="btn-clue-mobile" class="btn btn-outline-warning w-100 mb-3" disabled>
+                        <i class="bi bi-lightbulb me-2"></i>{% trans "Use Clue" %}
+                    </button>
+                    
+                    <!-- Mobile Flag Mode Switch -->
+                    <div id="flag-mode-toggle" class="p-2 bg-dark rounded">
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <span class="text-primary fw-bold"><i class="bi bi-hand-index me-1"></i>{% trans "Reveal" %}</span>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flag-mode-switch" style="width: 3em; height: 1.5em; cursor: pointer;">
                             </div>
+                            <span id="flag-mode-label" class="text-muted"><i class="bi bi-flag-fill me-1"></i>{% trans "Flag" %}</span>
                         </div>
                     </div>
                 </div>

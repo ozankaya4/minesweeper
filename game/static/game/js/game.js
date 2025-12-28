@@ -275,6 +275,7 @@ const RogueSweeper = (function() {
         elements.btnNextLevel = document.getElementById('btn-next-level');
         elements.btnAbandon = document.getElementById('btn-abandon');
         elements.btnSaveProgress = document.getElementById('btn-save-progress');
+        elements.btnClueMobile = document.getElementById('btn-clue-mobile');
         
         // Mobile flag mode toggle
         elements.flagModeToggle = document.getElementById('flag-mode-toggle');
@@ -297,6 +298,11 @@ const RogueSweeper = (function() {
         
         // Clue button
         elements.btnClue.addEventListener('click', toggleClueMode);
+        
+        // Mobile Clue button
+        if (elements.btnClueMobile) {
+            elements.btnClueMobile.addEventListener('click', toggleClueMode);
+        }
         
         // Next Level button
         elements.btnNextLevel.addEventListener('click', advanceToNextLevel);
@@ -730,11 +736,13 @@ const RogueSweeper = (function() {
         if (state.isClueMode) {
             document.body.classList.add('clue-mode');
             elements.btnClue.classList.add('active');
+            if (elements.btnClueMobile) elements.btnClueMobile.classList.add('active');
             elements.gameStatus.textContent = getMessage('clueMode', 'Clue Mode');
             elements.gameStatus.className = 'badge bg-warning text-dark';
         } else {
             document.body.classList.remove('clue-mode');
             elements.btnClue.classList.remove('active');
+            if (elements.btnClueMobile) elements.btnClueMobile.classList.remove('active');
             elements.gameStatus.textContent = getMessage('playing', 'Playing');
             elements.gameStatus.className = 'badge bg-success';
         }
@@ -769,8 +777,10 @@ const RogueSweeper = (function() {
         // Update clue button state
         if (cluesRemaining > 0 && !data.board?.game_over) {
             elements.btnClue.disabled = false;
+            if (elements.btnClueMobile) elements.btnClueMobile.disabled = false;
         } else {
             elements.btnClue.disabled = true;
+            if (elements.btnClueMobile) elements.btnClueMobile.disabled = true;
             state.isClueMode = false;
             document.body.classList.remove('clue-mode');
         }
