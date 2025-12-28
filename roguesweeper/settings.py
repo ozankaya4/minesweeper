@@ -34,7 +34,11 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,ozankaya44.pythonanywhere.com').split(',')]
+# Always include PythonAnywhere domain + any from environment
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ozankaya44.pythonanywhere.com']
+_extra_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if _extra_hosts:
+    ALLOWED_HOSTS.extend([host.strip() for host in _extra_hosts.split(',') if host.strip()])
 
 # Application definition
 
