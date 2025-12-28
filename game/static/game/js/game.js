@@ -346,29 +346,23 @@ const RogueSweeper = (function() {
 
     /**
      * Initialize mobile flag mode toggle
-     * Shows toggle on touch devices, handles button clicks
+     * Handles button clicks for reveal/flag mode switching
      */
     function initMobileFlagMode() {
-        // Check if this is a touch device
-        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        // Reveal mode button click
+        if (elements.btnModeReveal) {
+            elements.btnModeReveal.addEventListener('click', (e) => {
+                e.preventDefault();
+                setFlagMode(false);
+            });
+        }
         
-        if (isTouchDevice && elements.flagModeToggle) {
-            // Show the toggle on touch devices
-            elements.flagModeToggle.classList.remove('d-none');
-            
-            // Reveal mode button click
-            if (elements.btnModeReveal) {
-                elements.btnModeReveal.addEventListener('click', () => {
-                    setFlagMode(false);
-                });
-            }
-            
-            // Flag mode button click
-            if (elements.btnModeFlag) {
-                elements.btnModeFlag.addEventListener('click', () => {
-                    setFlagMode(true);
-                });
-            }
+        // Flag mode button click
+        if (elements.btnModeFlag) {
+            elements.btnModeFlag.addEventListener('click', (e) => {
+                e.preventDefault();
+                setFlagMode(true);
+            });
         }
     }
 

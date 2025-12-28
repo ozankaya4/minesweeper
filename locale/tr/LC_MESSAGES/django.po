@@ -793,5 +793,8 @@ msgstr "Bayrak"
 msgid "Tap mode"
 msgstr "Dokunma modu"
 
+msgid "Reveal or Flag (use toggle)"
+msgstr "Aç veya Bayrak (düğmeyi kullan)"
+
 #~ msgid "Login"
 #~ msgstr "Giriş Yap"
