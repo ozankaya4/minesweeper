@@ -372,18 +372,17 @@ const RogueSweeper = (function() {
      */
     function setFlagMode(enabled) {
         touchState.isFlagMode = enabled;
+        console.log('Flag mode set to:', enabled); // Debug
         
         if (elements.btnModeReveal && elements.btnModeFlag) {
             if (enabled) {
-                elements.btnModeReveal.classList.remove('btn-primary', 'active');
-                elements.btnModeReveal.classList.add('btn-outline-primary');
-                elements.btnModeFlag.classList.remove('btn-outline-warning');
-                elements.btnModeFlag.classList.add('btn-warning', 'active');
+                // Flag mode ON
+                elements.btnModeReveal.className = 'btn btn-outline-primary';
+                elements.btnModeFlag.className = 'btn btn-warning active';
             } else {
-                elements.btnModeReveal.classList.remove('btn-outline-primary');
-                elements.btnModeReveal.classList.add('btn-primary', 'active');
-                elements.btnModeFlag.classList.remove('btn-warning', 'active');
-                elements.btnModeFlag.classList.add('btn-outline-warning');
+                // Reveal mode ON
+                elements.btnModeReveal.className = 'btn btn-primary active';
+                elements.btnModeFlag.className = 'btn btn-outline-warning';
             }
         }
     }
@@ -817,10 +816,13 @@ const RogueSweeper = (function() {
         
         // If in flag mode, toggle flag instead of reveal
         if (touchState.isFlagMode) {
+            console.log('Flag mode active, attempting to flag cell', row, col); // Debug
+            console.log('Cell classes:', cell.className); // Debug
             // Only allow flagging hidden cells
             if (cell.classList.contains('hidden') || 
                 cell.classList.contains('flagged') || 
                 cell.classList.contains('flagged-immune')) {
+                console.log('Flagging cell'); // Debug
                 await performAction(row, col, 'flag');
             }
             return;
