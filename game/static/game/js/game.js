@@ -501,16 +501,23 @@ const RogueSweeper = (function() {
         // Apply cell state
         applyCellState(cell, value);
         
-        // Add event listeners for desktop
-        cell.addEventListener('click', handleLeftClick);
-        cell.addEventListener('contextmenu', handleRightClick);
-        cell.addEventListener('auxclick', handleMiddleClick);
+        // Check if device supports touch
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         
-        // Add touch event listeners for mobile (long-press to flag)
-        cell.addEventListener('touchstart', handleTouchStart, { passive: false });
-        cell.addEventListener('touchend', handleTouchEnd);
-        cell.addEventListener('touchmove', handleTouchMove, { passive: false });
-        cell.addEventListener('touchcancel', handleTouchCancel);
+        if (isTouchDevice) {
+            // Touch device: use touch events only
+            cell.addEventListener('touchstart', handleTouchStart, { passive: false });
+            cell.addEventListener('touchend', handleTouchEnd, { passive: false });
+            cell.addEventListener('touchmove', handleTouchMove, { passive: false });
+            cell.addEventListener('touchcancel', handleTouchCancel);
+            // Prevent context menu on long press
+            cell.addEventListener('contextmenu', (e) => e.preventDefault());
+        } else {
+            // Desktop: use mouse events
+            cell.addEventListener('click', handleLeftClick);
+            cell.addEventListener('contextmenu', handleRightClick);
+            cell.addEventListener('auxclick', handleMiddleClick);
+        }
         
         return cell;
     }
@@ -706,10 +713,12 @@ const RogueSweeper = (function() {
     }
 
     /**
-     * Handle touch end - perform click if not long press
+     * Handle touch end - perform tap action if not long press
      * @param {TouchEvent} e - Touch event
      */
     function handleTouchEnd(e) {
+        e.preventDefault(); // Prevent any default behavior and click events
+        
         const cell = touchState.cell;
         
         // Clear the timer
@@ -723,20 +732,51 @@ const RogueSweeper = (function() {
             cell.classList.remove('touch-active');
         }
         
-        // If it was a long press, action already performed - prevent click
+        // If it was a long press, flag action already performed
         if (touchState.isLongPress) {
-            e.preventDefault();
             touchState.isLongPress = false;
             return;
         }
         
-        // If user moved, don't perform click
+        // If user moved, don't perform action
         if (touchState.moved) {
             return;
         }
         
-        // Normal tap - let the click event handle it
-        // (click event fires after touchend)
+        // Normal tap - perform reveal action (same as left click)
+        if (cell) {
+            handleTapReveal(cell);
+        }
+    }
+
+    /**
+     * Handle tap to reveal (for touch devices)
+     * @param {HTMLElement} cell - The cell element
+     */
+    async function handleTapReveal(cell) {
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        
+        // Don't allow if game is over
+        if (state.gameData?.board?.game_over) {
+            return;
+        }
+        
+        let action = 'reveal';
+        
+        // Check if this is a revealed numbered cell (for chord action)
+        if (cell.classList.contains('revealed') && !cell.classList.contains('empty')) {
+            action = 'chord';
+        } else if (!cell.classList.contains('hidden') && !cell.classList.contains('flagged') && !cell.classList.contains('flagged-immune')) {
+            // Don't allow taps on other revealed cells (empty cells)
+            return;
+        } else if (state.isClueMode) {
+            // If clue mode is active, use clue action
+            action = 'clue';
+            toggleClueMode();
+        }
+        
+        await performAction(row, col, action);
     }
 
     /**
