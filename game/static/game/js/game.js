@@ -36,18 +36,10 @@ const RogueSweeper = (function() {
     };
 
     // =============================================================================
-    // Touch State (for mobile long-press flagging)
+    // Touch State (for mobile flag mode toggle)
     // =============================================================================
     
-    const LONG_PRESS_DURATION = 500; // milliseconds
     let touchState = {
-        timer: null,
-        startX: 0,
-        startY: 0,
-        cell: null,
-        isLongPress: false,
-        moved: false,
-        skipNextClick: false,  // Flag to prevent click after long press
         isFlagMode: false  // Flag mode toggle for mobile
     };
 
@@ -550,17 +542,7 @@ const RogueSweeper = (function() {
         // Add click events for all devices
         cell.addEventListener('click', handleLeftClick);
         cell.addEventListener('contextmenu', handleRightClick);
-        
-        // Check if device supports touch - add touch events for visual feedback
-        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        
-        if (isTouchDevice) {
-            // Touch device: add touch events for visual feedback
-            cell.addEventListener('touchstart', handleTouchStart, { passive: false });
-            cell.addEventListener('touchmove', handleTouchMove, { passive: false });
-            cell.addEventListener('touchcancel', handleTouchCancel);
-            cell.addEventListener('auxclick', handleMiddleClick);
-        }
+        cell.addEventListener('auxclick', handleMiddleClick);
         
         return cell;
     }
@@ -607,13 +589,6 @@ const RogueSweeper = (function() {
      * @param {MouseEvent} e - Click event
      */
     async function handleLeftClick(e) {
-        // Skip this click if it's the result of a long press
-        if (touchState.skipNextClick) {
-            touchState.skipNextClick = false;
-            e.preventDefault();
-            return;
-        }
-        
         const cell = e.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
@@ -712,187 +687,6 @@ const RogueSweeper = (function() {
     // =============================================================================
     // Touch Handlers (Mobile Long-Press for Flagging)
     // =============================================================================
-
-    /**
-     * Handle touch start - begin long press timer
-     * @param {TouchEvent} e - Touch event
-     */
-    function handleTouchStart(e) {
-        const cell = e.currentTarget;
-        
-        // Store touch start position
-        const touch = e.touches[0];
-        touchState.startX = touch.clientX;
-        touchState.startY = touch.clientY;
-        touchState.cell = cell;
-        touchState.isLongPress = false;
-        touchState.moved = false;
-        
-        // Add visual feedback
-        cell.classList.add('touch-active');
-        
-        // Start long press timer
-        touchState.timer = setTimeout(() => {
-            // Only flag if user hasn't moved
-            if (!touchState.moved) {
-                touchState.isLongPress = true;
-                touchState.skipNextClick = true;  // Prevent the click event
-                
-                // Vibrate for haptic feedback (if supported)
-                if (navigator.vibrate) {
-                    navigator.vibrate(50);
-                }
-                
-                // Perform flag action
-                handleLongPressFlag(cell);
-            }
-        }, LONG_PRESS_DURATION);
-    }
-
-    /**
-     * Handle touch move - cancel long press if moved too far
-     * @param {TouchEvent} e - Touch event
-     */
-    function handleTouchMove(e) {
-        if (!touchState.timer) return;
-        
-        const touch = e.touches[0];
-        const deltaX = Math.abs(touch.clientX - touchState.startX);
-        const deltaY = Math.abs(touch.clientY - touchState.startY);
-        
-        // If moved more than 10px, cancel long press
-        if (deltaX > 10 || deltaY > 10) {
-            touchState.moved = true;
-            clearTimeout(touchState.timer);
-            touchState.timer = null;
-            
-            if (touchState.cell) {
-                touchState.cell.classList.remove('touch-active');
-            }
-        }
-    }
-
-    /**
-     * Handle touch end - perform tap action if not long press
-     * @param {TouchEvent} e - Touch event
-     */
-    function handleTouchEnd(e) {
-        e.preventDefault(); // Prevent any default behavior and click events
-        
-        const cell = touchState.cell;
-        
-        // Clear the timer
-        if (touchState.timer) {
-            clearTimeout(touchState.timer);
-            touchState.timer = null;
-        }
-        
-        // Remove visual feedback
-        if (cell) {
-            cell.classList.remove('touch-active');
-        }
-        
-        // If it was a long press, flag action already performed
-        if (touchState.isLongPress) {
-            touchState.isLongPress = false;
-            return;
-        }
-        
-        // If user moved, don't perform action
-        if (touchState.moved) {
-            return;
-        }
-        
-        // Normal tap - perform reveal action (same as left click)
-        if (cell) {
-            handleTapReveal(cell);
-        }
-    }
-
-    /**
-     * Handle tap to reveal (for touch devices)
-     * @param {HTMLElement} cell - The cell element
-     */
-    async function handleTapReveal(cell) {
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-        
-        // Don't allow if game is over
-        if (state.gameData?.board?.game_over) {
-            return;
-        }
-        
-        // If in flag mode, toggle flag instead of reveal
-        if (touchState.isFlagMode) {
-            console.log('Flag mode active, attempting to flag cell', row, col); // Debug
-            console.log('Cell classes:', cell.className); // Debug
-            // Only allow flagging hidden cells
-            if (cell.classList.contains('hidden') || 
-                cell.classList.contains('flagged') || 
-                cell.classList.contains('flagged-immune')) {
-                console.log('Flagging cell'); // Debug
-                await performAction(row, col, 'flag');
-            }
-            return;
-        }
-        
-        let action = 'reveal';
-        
-        // Check if this is a revealed numbered cell (for chord action)
-        if (cell.classList.contains('revealed') && !cell.classList.contains('empty')) {
-            action = 'chord';
-        } else if (!cell.classList.contains('hidden') && !cell.classList.contains('flagged') && !cell.classList.contains('flagged-immune')) {
-            // Don't allow taps on other revealed cells (empty cells)
-            return;
-        } else if (state.isClueMode) {
-            // If clue mode is active, use clue action
-            action = 'clue';
-            toggleClueMode();
-        }
-        
-        await performAction(row, col, action);
-    }
-
-    /**
-     * Handle touch cancel
-     * @param {TouchEvent} e - Touch event
-     */
-    function handleTouchCancel(e) {
-        if (touchState.timer) {
-            clearTimeout(touchState.timer);
-            touchState.timer = null;
-        }
-        
-        if (touchState.cell) {
-            touchState.cell.classList.remove('touch-active');
-        }
-        
-        touchState.isLongPress = false;
-        touchState.moved = false;
-    }
-
-    /**
-     * Handle long press flag action
-     * @param {HTMLElement} cell - Cell element
-     */
-    async function handleLongPressFlag(cell) {
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-        
-        // Only allow flagging hidden cells
-        if (!cell.classList.contains('hidden') && 
-            !cell.classList.contains('flagged') &&
-            !cell.classList.contains('flagged-immune')) {
-            return;
-        }
-        
-        // Don't allow if game is over
-        if (state.gameData?.board?.game_over) {
-            return;
-        }
-        
-        await performAction(row, col, 'flag');
-    }
 
     /**
      * Perform a game action
